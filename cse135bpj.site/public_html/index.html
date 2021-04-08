@@ -5,210 +5,42 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CSE 135</title>
-
-  <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./style.css" />
 </head>
 
 <body>
   <div id="content-wrapper">
     <header>
-      <h1>CSE 135 Spring 2021</h1>
-      <nav>
-        <p>Navigation:</p>
-        <ul>
-          <li><a href="https://examples.cse135.site/">Examples</a></li>
-          <li><a href="https://reporting.cse135.site/">Reporting</a></li>
-          <li><a href="https://collector.cse135.site/">Collector</a></li>
-        </ul>
-      </nav>
+      <h1>CSE 135</h1>
+      <p>Spring 2021</p>
     </header>
-    <main>
-      <article id="Homework1">
+    <main id="homework-sections">
+      <section id="Homework_1">
         <h2>Homework 1</h2>
-        <section id="Homework1Content">
+        <article>
           <ul>
-            <li>PHP</li>
-            <li>Node</li>
-            <li>Analytics</li>
+            <li><a href="#">PHP</a></li>
+            <li><a href="#">Node</a></li>
+            <li><a href="#">Analytics</a></li>
           </ul>
-        </section>
-      </article>
-
-      <article id="Homework2">
+        </article>
+      </section>
+      <section id="Homework_2">
         <h2>Homework 2</h2>
-        <section id="Homework2Content">
-          <p>TBD</p>
-        </section>
-      </article>
-
-      <article id="Analytics App">
+        <article>
+          <ul>
+            <a href="#">TBD</a>
+          </ul>
+        </article>
+      </section>
+      <section id="Analytics_App">
         <h2>Analytics App</h2>
-        <section id="AnalyticsAppContent">
-          <p>TBD</p>
-        </section>
-      </article>
-
-        
-      </article>
-    </main>
-    <!-- <main>
-      <article id="syllabus">
-        <h2>Syllabus</h2>
-        <section id="syllabus-preface">
-          <p>Web development is one of the more difficult forms of development facing a modern computing professional.  Conventional wisdom suggests this is not the case and practitioners often are surprised by the difficulties of the web development along many dimensions including a rapidly changing technology, lack of depth of understanding,  security and performance challenges, and rising user experience requirements.   This course attempts to provide students with a foundational overview of server-side web technologies and their application to help navigate such challenges. To adhere to the renaming of the course our emphasis on the use of analytics for monitoring user activity and performance. </p>
-        </section>
-        <section id="syllabus-topics">
-          <p>The course covers the following topics:</p>
+        <article>
           <ul>
-            <li>Foundational awareness of the web and internet medium that respects inherent trade-offs in development practices, performance, and security</li>
-            <li>Review of enough front-end technology including standards based HTML,  CSS and JS to pass the course.   CSE 134 or equivalent experience is preferred for maximum course value.</li>
-            <li>HTTP and its appropriate use in site and application delivery</li>
-            <li>Web Server operation and function</li>
-            <li>Core server-side web technologies including:
-              <ul>
-                <li>Traditional fork-exec CGI style</li>
-                <li>Server Executed Scripting (ex. PHP)</li>
-                <li>Modules (ex. Apache Modules)</li>
-                <li>NodeJS and microservice of cloud function styles </li>
-              </ul>
-            </li>
-            <li>Hands-on experience using either JavaScript and/or PHP</li>
-            <li>Use of a backend data store (either NoSQL or SQL based)</li>
-            <li>MVC, REST and CRUD pattern usage in support of a server-side application </li>
-            <li>Awareness of the proper and improper use of analytics </li>
-            <li>Basic data visualization ideas useful for analytic consumption</li>
+            <a href="#">TBD</a>
           </ul>
-          <p>At the conclusion of the course students should be able to host a simple web site and build a bespoke analytics system with a client agent and server-side application to collect and monitor analytical data about user activity.</p>
-        </section>
-        <section id="syllabus-grading">
-          <h3>Grading</h3>
-          <ul>
-            <li>Assignments (55%)</li>
-            <li>Quizzes (40%)</li>
-            <li>Participation Signals (5%)</li>
-            <li>Some ungraded items that are optional may be factored for those on the "cusp"</li>
-          </ul>
-        </section>
-        <section id="syllabus-logistics">
-          <h3>Logistics</h3>
-          <ul>
-            <li><span class="logistics-topic">Lectures:</span> MWF 10:00-10:50am PST  in Zoom </li>
-            <li><span class="logistics-topic">Discussion:</span> W 11:00-11:50am PST in Zoom</li>
-            <li><span class="logistics-topic">Final:</span> M June 7th 8:00-11:00am PST TBD</li>
-            <li><span class="logistics-topic">Meeting Advisory:</span> Zoom meeting are recorded and may be rebroadcast.  Your audio/video participation in a Zoom meeting means you agree with this recording.</li>
-            <li><span class="logistics-topic">Gradescope Entry Code:</span> XXX</li>
-            <li><span class="logistics-topic">Slack:</span> <a href="https://cse135-sp21.slack.com">https://cse135-sp21.slack.com</a></li>
-            <li><span class="logistics-topic">Slack Availability:</span> Variably between 9am - 8pm PST and other time at my discretion</li>
-            <li><span class="logistics-topic">Email:</span> <a href="tpowell2@ucsd.edu">tpowell2@ucsd.edu</a> (assume Slack is a better choice, DM please)</li>
-            <li><span class="logistics-topic">Office Hours:</span> <bold>I prefer you just DM me to arrange at any time to arrange something</em>, but formally Monday 3:00-5:00pm I will be certainly available</li>
-            <li><span class="logistics-topic">Personal Zoom:</span> <a href="https://ucsd.zoom.us/my/thomaspowell">https://ucsd.zoom.us/my/thomaspowell</a></li>
-          </ul>
-        </section>
-        <section id="syllabus-course-staff">
-          <section id="syllabus-teaching-assistants">
-            <h3>Teaching Assistants</h3>
-            <article class="teaching-assistant">
-              <p class="ta-name">Bao Hoang</p>
-              <p class="ta-email">Email: <a href="mailto:bghoang@ucsd.edu">bghoang@ucsd.edu</a></p>
-              <p class="ta-office-hours">Office Hours: <span style="background-color:yellow">// TODO</span></p>
-              <p class="ta-personal-zoom">Personal Zoom: <span style="background-color:yellow">// TODO</span></p>
-            </article>
-            <article class="teaching-assistant">
-              <p class="ta-name">Vivian Lee</p>
-              <p class="ta-email">Email: <a href="mailto:vyl003@ucsd.edu">vyl003@ucsd.edu</a></p>
-              <p class="ta-office-hours">Office Hours: <span style="background-color:yellow">// TODO</span></p>
-              <p class="ta-personal-zoom">Personal Zoom: <span style="background-color:yellow">// TODO</span></p>
-            </article>
-          </section>
-          <section id="syllabus-tutors">
-            <h3>Tutors</h3>
-            <article class="tutor">
-              <p class="ta-name">Jaime Izabal</p>
-              <p class="ta-email">Email: <a href="mailto:jizabal@ucsd.edu">jizabal@ucsd.edu</a></p>
-              <p class="ta-office-hours">Office Hours: <span style="background-color:yellow">// TODO</span></p>
-              <p class="ta-personal-zoom">Personal Zoom: <span style="background-color:yellow">// TODO</span></p>
-            </article>
-            <article class="tutor">
-              <p class="ta-name">Saikrishna Chandhrasekhar</p>
-              <p class="ta-email">Email: <a href="mailto:schandhr@ucsd.edu">schandhr@ucsd.edu</a></p>
-              <p class="ta-office-hours">Office Hours: <span style="background-color:yellow">// TODO</span></p>
-              <p class="ta-personal-zoom">Personal Zoom: <span style="background-color:yellow">// TODO</span></p>
-            </article>
-            <article class="tutor">
-              <p class="ta-name"><span style="background-color:yellow">// TODO</span</p>
-              <p class="ta-email">Email: <a href="mailto:"></a></p>
-              <p class="ta-office-hours">Office Hours: <span style="background-color:yellow">// TODO</span></p>
-              <p class="ta-personal-zoom">Personal Zoom: <span style="background-color:yellow">// TODO</span></p>
-            </article>
-          </section>
-        </section>
-        <section id="syllabus-online-policies">
-          <h3>Online Instruction Policies</h3>
-          <p>This course will be taught using live, online audio and visual instruction and will take place during the times indicated in the UCSD Schedule of Classes. Live lecture attendance is not absolutely required, but is highly encouraged for success in the class.  Actual attendance is important for a positive learning outcome and so that questions can be asked and answered during the lecture and interactive discussions can be carried out.  Past experience with remote teaching has showing a direct correlation to attendance and positive grade outcomes.  To that end we do have a 5% participation aspect to this course.  If for time zone reasons there is no appropriate way to attend understand participation can happen in Slack or meetings with the teaching staff.</p>
-        </section>
-        <section id="syllabus-conduct-etiquette">
-          <h3>Conduct and Etiquette</h3>
-          <p>In general we should try to act just like we would in real life (IRL) in that we treat each other with respect and as fellow computing professionals.  Students will be judged the same way in these online venues as IRL so <a href="https://students.ucsd.edu/sponsor/student-conduct/policiesandprocedures.html">UCSD Code of Conduct</a> does apply at all times. </p>
-        </section>
-        <p>A few specific tips on netiquette with particular emphasis on our tools is provided here </p>
-        <h4>Zoom</h4>
-        <ul>
-          <li>Raise your hand with the participant feature and wait until </li>
-          <li>Stay on mute on entry and until you are asked to unmute or are involved in a question</li>
-          <li>Use headphones for audio if at all possible</li>
-          <li>Use video if you are comfortable for your own focus and for better personalization</li>
-          <li>If you use a video background it should be tasteful and appropriate</li>
-        </ul>
-        <h4>Slack</h4>
-        <ul>
-          <li>Use a real picture of yourself and a real name for clarity</li>
-          <li>Set availability / status</li>
-          <li>Respect DnD, but don't hesitate to DM fellow teaching staff otherwise</li>
-          <li><strong>Use threads on questions</strong></li>
-          <li>Use channels for topics </li>
-          <li>Make sure you are aware of pinning, search and posting as opposed to just simple chat</li>
-          <li>Use Giphy and custom emojis, etc. but keep most of it in #random</li>
-        </ul>
-        <h4>Canvas</h4>
-        <ul>
-          <li>We will try to use Canvas for most things per UCSD policy</li>
-          <li>Assume class content will be produced first in other areas (Zoom, Slack, Notion, Git, etc.) and will eventually make its way to Canvas, but Canvas may not be the most immediate source of truth  </li>
-          <li>If you find a mistake in Canvas content please advise teaching staff</li>
-          <li>Canvas quizzing will be used</li>
-          <li>Academic integrity will be enforced on Canvas quizzing</li>
-          <li>Canvas discussions will not be favored unless the class decides to move to it over Slack</li>
-          <li>Assignments will be issued via Canvas, but may just be links </li>
-          <li>You are reasonable for timezone awareness for help and turn-ins.  The class is run on P.S.T. (Pacific Standard Time - San Diego) given our location.  This means support times will not happen in the middle of the night and you are responsible to understand when things are due.  We will provide as much window leeway as possible, but the dates will be set and you will be responsible for understanding when things happen.</li>
-        </ul>
-      </article>
-      <article id="syllabus-network-issues">
-        <h3>Network Issues</h3>
-        <p>Given the occasional disruptions that inevitably occur when using online conferencing tools (due to WiFi drops, service drops, etc.) we will adhere to the following plan of action for each and every online class meeting.</p>
-        <ul>
-          <li>We will continue with Zoom for a period of 5 mins once disruption is noticed</li>
-          <li>If failure continues we will meeting in the #lectures channel in Slack where I will create a text discussion or use an alternate broadcast mechanism</li>
-          <li>Full failure because of network will result in a separate recording made and posted within 24-48hrs on Canvas</li>
-        </ul>
-        <p><strong>Students experiencing media or network problems are required to alert the instructor as soon as possible, for mitigation or alternate arrangement.</strong> Future claims beyond an initial 24hr period of a delivery incident will not serve as a valid excuse for assignment or testing delays.  TL;DR - speak up if your network acts up!</p>
-      </article>
-      <article id="syllabus-material-copyright">
-        <h3>Class Material Copyright Issues</h3>
-        <p>Per UCSD policy since we are now using things online all original class materials are copyrighted by me and are protected both by U.S. Copyright law and by <a href="https://copyright.universityofcalifornia.edu/resources/ownership-course-materials.html">University policy</a>. You may take notes and make copies of course materials for your own use. You may also share those materials with another student who is enrolled in or auditing this course. <a href="https://copyright.universityofcalifornia.edu/resources/recorded-presentations.html">You may not reproduce, distribute or display (post/upload) lecture notes or recordings or course materials in any other way — whether or not a fee is charged</a> — without express prior written consent. You also may not allow others to do so. If you do not abide by this policy you may be subject to student conduct proceedings under the UC San Diego Student Code of Conduct.</p>
-        <p>Some content we generate in the class may be used in future courses, but it is ultimately yours, if you do not want your content part of such materials please indicate this to the teaching staff and alternate versions will be created.  Any original work such as project assignments will not be shared publicly by the teaching staff unless you agree to it.  The content of the course in terms of PowerPoints, assignments, etc. are owned by the Instructor and in some cases cross held with various publishing companies like McGraw-Hill.</p>
-        <p>Again, the University is strongly advising students to rigorously adhere to the policy of non-repost of copyrighted materials particularly to "course help" sites as it may result in disciplinary actions.</p>
-      </article>
-      <article id="syllabus-diversity-inclusion">
-        <h4>Diversity and Inclusion</h4>
-        <p>We are committed to fostering a learning environment for this course that supports a diversity of thoughts, perspectives and experiences, and respects your identities (including race, ethnicity, heritage, gender, sex, class, sexuality, religion, ability, age, educational background, etc.). Our goal is to create a diverse and inclusive learning environment where all students feel comfortable and can thrive.</p>
-        <p>Our instructional staff will make a concerted effort to be welcoming and inclusive to the wide diversity of students in this course. If there is a way we can make you feel more included please let one of the course staff know, either in person, via email/discussion board, or even in a note under the door. Our learning about diverse perspectives and identities is an ongoing process, and we welcome your perspectives and input.</p>
-        <p>We also expect that you, as a student in this course, will honor and respect your classmates, abiding by the UCSD Principles of Community (<a href="https://ucsd.edu/about/principles.html">https://ucsd.edu/about/principles.html</a>). Please understand that others’ backgrounds, perspectives and experiences may be different than your own, and help us to build an environment where everyone is respected and feels comfortable.</p>
-        <p>If you experience any sort of harassment or discrimination, please contact the instructor as soon as possible. If you prefer to speak with someone outside of the course, please contact the Office of Prevention of Harassment and Discrimination: <a href="https://ophd.ucsd.edu">https://ophd.ucsd.edu</a></p>
-      </article>
-      <article id="syllabus-students-disabilities">
-        <h4>Students with Disabilities</h4>
-        <p>We aim to create an environment in which all students can succeed in this course. If you have a disability, please contact the Office for Students with Disability (OSD), which is located in University Center 202 behind Center Hall, to discuss appropriate accommodations right away. We will work to provide you with the accommodations you need, but you must first provide a current Authorization for Accommodation (AFA) letter issued by the OSD. You are required to present their AFA letters to Faculty (please make arrangements to contact me privately) and to the OSD Liaison in the department in advance so that accommodations may be arranged.</p>
-      </article> -->
+        </article>
+      </section>
     </main>
   </div>
 </body>
