@@ -1,9 +1,119 @@
 <!DOCTYPE html>
-<html>
-<body>
+<html lang = "en">
+  <head>
+    <meta charset="utf-8">
+    <title>Pranay's webpage!</title>
+    <link rel="stylesheet" href="pranaystyle.css" />
+    <script async src="./pranayjs.js"></script>
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
 
-</body>
-</html> 
+  </head>
+  <body>
+  <div id = "title">
+    <h1>Pranay Tulugu</h1>
+  </div>
+
+
+  <script>
+    // linear interpolation between two values a and b
+    // u controls amount of a/b and is in range [0.0,1.0]
+    lerp = function(a,b,u) {
+        return (1-u) * a + u * b;
+    };
+
+    fade = function(element, property, start, end, duration) {
+      var interval = 10;
+      var steps = duration/interval;
+      var step_u = 1.0/steps;
+      var u = 0.0;
+      var theInterval = setInterval(function(){
+        if (u >= 1.0){ clearInterval(theInterval) }
+        var r = parseInt(lerp(start.r, end.r, u));
+        var g = parseInt(lerp(start.g, end.g, u));
+        var b = parseInt(lerp(start.b, end.b, u));
+        var colorname = 'rgb('+r+','+g+','+b+')';
+        el.style.setProperty(property, colorname);
+        u += step_u;
+      }, interval);
+    };
+
+    // in action
+    el = document.getElementById('title'); // your element
+    property = 'color';       // fading property
+    startColor = {r:0, g:  0, b:  0};  // red
+    endColor   = {r:  0, g:128, b:128};  // dark turquoise
+    anotherColor = {r: 255, g:150, b:140};
+    fade(el,'color',startColor,endColor,1000);
+
+    // fade back after 2 secs
+    setTimeout(function(){
+      fade(el,'color',endColor,startColor,1000);
+    },2000);
+
+    setTimeout(function(){
+      fade(el,'color',startColor,anotherColor,1000);
+    },4000);
+    setTimeout(function(){
+      fade(el,'color',anotherColor,endColor,1000);
+    },6000);
+    setTimeout(function(){
+      fade(el,'color',endColor,anotherColor,1000);
+    },7000);
+    setTimeout(function(){
+      fade(el,'color',anotherColor,startColor,1000);
+    },8000);
+    setTimeout(function(){
+      fade(el,'color',startColor,anotherColor,1000);
+    },9000);
+    setTimeout(function(){
+      fade(el,'color',anotherColor,endColor,1000);
+    },10000);
+    setTimeout(function(){
+      fade(el,'color',endColor,anotherColor,1000);
+    },11000);
+    setTimeout(function(){
+      fade(el,'color',anotherColor,startColor,1000);
+    },12000);
+
+    </script>
+
+
+    <div id='date'></div>
+
+
+    <div class = "about-section">
+      <p>Current graduating senior in computer science interested in Machine Learning, 
+      algorithm design and security. </p>
+      <p>Also interested in a lot of other topics such as 
+	 metaphysics, international politics, music, etc</p>
+    </div>
+
+
+    <div class="image-section">
+      <div class="section-style">
+        <img src="./pranayimgs/mlimage.jpg" alt="" width = "300" height = "200"/>
+      </div>
+
+      <div class="section-style">
+        <img src="./pranayimgs/algorithms.jpg" alt="" width = "300" height = "200"/>
+      </div>
+
+      <div class="section-style">
+        <img src="./pranayimgs/csecurity.jpg" alt="" width = "300" height = "200"/>
+      </div>
+
+    </div>
+    
+    <div class = "about-section">
+	<p>Also interested in everything music, from live performing to sound production.
+	    Love varous genres like lofi, house, aesthetic trap etc</p>
+    </div>
+
+    <div class = "soundcloud">
+      <iframe width="1000" height="150" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/734372149&color=%23515068&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+      <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;">
+      </div>
+    </div>
+  </body>
+</html>
+

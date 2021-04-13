@@ -1,0 +1,25 @@
+body {
+  text-align: center;
+  background-color: #f0e8c5;
+}
+
+div {
+  margin-top: 20px;
+  font-family: Arial;
+}
+
+.title {
+  margin-top: 40px;
+}
+
+.image-section {
+  display: flex;
+  justify-content: center;
+}
+
+.section-style {
+  margin-right: 25px;
+  margin-left: 25px;
+  background-color: white;
+}
+
