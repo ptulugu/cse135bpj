@@ -57,6 +57,11 @@
   main {
     grid-area: main;
   }
+
+  .Profile_Pic {
+    width: 200px;
+    height: auto;
+  }
   
   section {
     margin: 15px auto;
