@@ -3,7 +3,6 @@ README
 Login for apache server:
 
 Username: grader
-
 Password: cse135Password
 
 Link to website:
