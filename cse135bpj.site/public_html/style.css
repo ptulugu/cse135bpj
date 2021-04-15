@@ -58,7 +58,7 @@ main {
   grid-area: main;
 }
 
-section {
+div {
   margin: 15px auto;
 }
 
