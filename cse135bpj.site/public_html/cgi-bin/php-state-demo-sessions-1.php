@@ -31,7 +31,7 @@ if ($name){
 }
 print "<br/><br/>";
 print "<a href=\"/cgi-bin/php-state-demo-sessions-2.php\">Session Page 2</a><br/>";
-print "<a href=\"/php-state-demo.html\">PHP Form</a><br />";
+print "<a href=\"/php-cgiform.html\">PHP Form</a><br />";
 print "<form style=\"margin-top:30px\" action=\"/cgi-bin/php-state-demo-destroy-sessions.php\" method=\"get\">";
 print "<button type=\"submit\">Destroy Session</button>";
 print "</form>";
