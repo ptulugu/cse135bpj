@@ -11,7 +11,7 @@
   puts "<h1>Ruby Sessions Page 2</h1>"
   puts "<table>"
 
-  if ENV["HTTP_COOKIE"] != nil and ENV["HTTP_COOKIE"] != "destroyed"
+  if ENV["HTTP_COOKIE"] != nil and !(ENV["HTTP_COOKIE"].include? "destroyed")
     puts "<tr><td>Cookie:</td><td>" + ENV["HTTP_COOKIE"].split(";")[0] + "</td></tr>\n"
   else
     puts "<tr><td>Cookie:</td><td>None</td></tr>\n"

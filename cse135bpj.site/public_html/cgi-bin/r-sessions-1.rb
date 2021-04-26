@@ -28,7 +28,7 @@
 # First check for new Cookie, then Check for old Cookie
   if name.length > 0
     puts "<tr><td>Cookie:</td><td>" + name + "</td></tr>\n"
-  elsif ENV["HTTP_COOKIE"] != nil and ENV["HTTP_COOKIE"] != "destroyed"
+  elsif ENV["HTTP_COOKIE"] != nil and !(ENV["HTTP_COOKIE"].include? "destroyed")
     puts "<tr><td>Cookie:</td><td>" + ENV["HTTP_COOKIE"].split(";")[0] + "</td></tr>\n"
   else
     puts "<tr><td>Cookie:</td><td>None</td></tr>\n"
