@@ -4,7 +4,7 @@ import sys
 
 if __name__ == '__main__':
     print("Cache-Control: no-cache")
-    print("Set-Cookie: None")
+    print("Set-Cookie: username=None")
     print("Content-type: text/html\n\n")
 
     print("<html><head><title>Python Session Destroyed</title></head>\

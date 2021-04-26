@@ -11,9 +11,10 @@ if __name__ == '__main__':
          <hr/>")
     print("<table>")
 
-    if(os.environ['HTTP_COOKIE'] != None):
-        cookie = os.environ['HTTP_COOKIE']
-        print("<tr><td>Cookie:</td><td>" + cookie.split(";")[0] + "</td></tr>")
+    cookie = os.environ['HTTP_COOKIE'].split("=")
+
+    if(cookie[0] == "username"):
+        print("<tr><td>Cookie:</td><td>" + cookie[1].split(";")[0] + "</td></tr>")
     else:
         print("<tr><td>Cookie:</td><td>None</td></tr>")
 

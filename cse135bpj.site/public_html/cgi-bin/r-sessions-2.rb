@@ -11,8 +11,16 @@
   puts "<h1>Ruby Sessions Page 2</h1>"
   puts "<table>"
 
-  if ENV["HTTP_COOKIE"] != nil and !(ENV["HTTP_COOKIE"].include? "destroyed")
-    puts "<tr><td>Cookie:</td><td>" + ENV["HTTP_COOKIE"].split(";")[0] + "</td></tr>\n"
+  # if ENV["HTTP_COOKIE"] != nil and !(ENV["HTTP_COOKIE"].include? "destroyed")
+  #   puts "<tr><td>Cookie:</td><td>" + ENV["HTTP_COOKIE"].split(";")[0] + "</td></tr>\n"
+  # else
+  #   puts "<tr><td>Cookie:</td><td>None</td></tr>\n"
+  # end
+
+  cookie = ENV["HTTP_COOKIE"].split("=")
+
+  if cookie[0] == "username"
+    puts "<tr><td>Cookie:</td><td>" + cookie[1].split(";")[0] + "</td></tr>\n"
   else
     puts "<tr><td>Cookie:</td><td>None</td></tr>\n"
   end

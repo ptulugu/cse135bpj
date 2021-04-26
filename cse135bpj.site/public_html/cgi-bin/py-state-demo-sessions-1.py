@@ -6,24 +6,16 @@ if __name__ == '__main__':
     print("Cache-Control: no-cache")
 
     username = ""
-    
-    # for line in sys.stdin:
-    #     username = line
-    # name = ""
-    # if(len(username) > 0):
-    #     if(username[0] == 'u'):
-    #         name = username.split("=")[1]
-
     for line in sys.stdin:
         username = line.split("=")
 
     name = ""
-    if(username and username[0] == "username"):
+    if(len(username) > 1 and username[0] == "username"):
         name = username[1]
 
     if(len(name) > 0):
         print("Content-type: text/html")
-        print("Set-Cookie: " + name + "\n")
+        print("Set-Cookie: username=" + name + "\n")
     else:
         print("Content-type: text/html\n")
 
@@ -32,11 +24,12 @@ if __name__ == '__main__':
            <hr/>")
     print("<table>")
 
+    cookie = os.environ['HTTP_COOKIE'].split("=")
+
     if(len(name) > 0):
         print("<tr><td>Cookie:</td><td>" + name + "</td></tr>")
-    elif(os.environ['HTTP_COOKIE'] != None):
-        cookie = os.environ['HTTP_COOKIE']
-        print("<tr><td>Cookie:</td><td>" + cookie.split(";")[0] + "</td></tr>")
+    elif(cookie[0] == "username"):
+        print("<tr><td>Cookie:</td><td>" + cookie[1].split(";")[0] + "</td></tr>")
     else:
         print("<tr><td>Cookie:</td><td>None</td></tr>")
 

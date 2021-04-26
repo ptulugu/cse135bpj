@@ -2,7 +2,7 @@
 
   # Headers
   puts "Cache-Control: no-cache\n"
-  puts "Set-Cookie: destroyed\n"
+  puts "Set-Cookie: username=destroyed\n"
   puts "Content-type: text/html\n\n"
 
   # Body - HTML

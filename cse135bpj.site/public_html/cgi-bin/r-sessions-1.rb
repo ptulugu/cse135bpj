@@ -13,7 +13,8 @@
   # Set the cookie using a header, add extra \n to end headers
   if name.length > 0
     puts "Content-type: text/html\n"
-    puts "Set-Cookie: " + name + "\n\n"
+    # puts "Set-Cookie: " + name + "\n\n"
+    puts "Set-Cookie: username=" + name + "\n\n"
   else
     puts "Content-type: text/html\n\n"
   end
@@ -26,10 +27,19 @@
   puts "<table>"
 
 # First check for new Cookie, then Check for old Cookie
+  # if name.length > 0
+  #   puts "<tr><td>Cookie:</td><td>" + name + "</td></tr>\n"
+  # elsif ENV["HTTP_COOKIE"] != nil and !(ENV["HTTP_COOKIE"].include? "destroyed")
+  #   puts "<tr><td>Cookie:</td><td>" + ENV["HTTP_COOKIE"].split(";")[0] + "</td></tr>\n"
+  # else
+  #   puts "<tr><td>Cookie:</td><td>None</td></tr>\n"
+  # end
+  cookie = ENV["HTTP_COOKIE"].split("=")
+
   if name.length > 0
     puts "<tr><td>Cookie:</td><td>" + name + "</td></tr>\n"
-  elsif ENV["HTTP_COOKIE"] != nil and !(ENV["HTTP_COOKIE"].include? "destroyed")
-    puts "<tr><td>Cookie:</td><td>" + ENV["HTTP_COOKIE"].split(";")[0] + "</td></tr>\n"
+  elsif cookie[0] == "username"
+    puts "<tr><td>Cookie:</td><td>" + cookie[1].split(";")[0] + "</td></tr>\n"
   else
     puts "<tr><td>Cookie:</td><td>None</td></tr>\n"
   end
