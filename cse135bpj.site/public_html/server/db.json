@@ -1,0 +1,39 @@
+{
+  "static": [
+    {
+      "id": 1,
+      "userAgentString": "",
+      "userLanguage":    "",
+      "userCookies":     "",
+      "userJS":          "",
+      "userImages":      "",
+      "userCSS":         "",
+      "userScreenDim":   "",
+      "userWindowDim":   "",
+      "userNetworkType": ""
+    }
+  ],
+  "performance": [
+    {
+      "id": 1,
+      "time":      "",
+      "loadStart": "",
+      "loadEnd":   "",
+      "totalLoad": ""
+    }
+  ],
+  "activity": [
+    {
+      "id": 1,
+      "cursorPos": "",
+      "clicks":    "",
+      "scrolling": "",
+      "keyEvents": "",
+      "breakEnd":  "",
+      "breakTime": "",
+      "userEnter": "",
+      "userLeave": "",
+      "userPage":  ""
+    }
+  ]
+}
