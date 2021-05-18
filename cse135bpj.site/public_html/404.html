@@ -5,8 +5,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>404 Page</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+  <script src = 'collector.js'></script>
+  <noscript><img id="tracker" src="tracker.php"></noscript>
+
+  <style type="text/css">
+    #testCSS {width: 3px;}
+    #testImg {display: none;}
+    #tracker {display: none;}
+  </style>
 </head>
 
 <body>
+
+  <?php
+  if(!isset($_COOKIE["user"])) {
+    $cookie_name = "user";
+    $cookie_value = rand();
+    setcookie($cookie_name, $cookie_value, "/");
+  }
+  ?>
+
+  <div id="testCSS"></div>
+
+  <img id="testImg" src="favicon.ico">
+  
   <h1>404</h1>
 </body>

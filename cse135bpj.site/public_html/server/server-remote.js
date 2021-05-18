@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const bodyParser = require('body-parser');
+const fs = require('fs');
 
 //Use the Express server npm package
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -9,13 +10,20 @@ app.use(bodyParser.json());
 
 //Connect to the MySql database
 var connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "cse135Password",
-    database: "hw3"
+    host: "cse135bpj-db-do-user-9024594-0.b.db.ondigitalocean.com",
+    port: "25060",
+    user: "doadmin",
+    password: "jy324q0llzvuqkbb",
+    database: "hw3",
+    ssl : {
+	ca : fs.readFileSync('./ca-certificate.crt')
+    }
 });
 connection.connect();
 
+app.get("/", (req, res) => {
+    res.send("This is the JSON REST API");
+});
 
 app.get("/static", function (req, res, next) {
     connection.query(
@@ -46,7 +54,7 @@ app.post("/static", function (req, res, next) {
         body,
         function (error, results, fields) {
             if (error) throw error;
-            
+            body["id"] = results["insertId"];
             res.send(body);
         }
     );

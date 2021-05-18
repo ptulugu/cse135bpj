@@ -3,9 +3,31 @@
 
 <head>
   <title>Ruby CGI Form</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+  <script src = 'collector.js'></script>
+  <noscript><img id="tracker" src="tracker.php"></noscript>
+
+  <style type="text/css">
+    #testCSS {width: 3px;}
+    #testImg {display: none;}
+    #tracker {display: none;}
+  </style>
 </head>
 
 <body>
+  <?php
+  if(!isset($_COOKIE["user"])) {
+    $cookie_name = "user";
+    $cookie_value = rand();
+    setcookie($cookie_name, $cookie_value, "/");
+  }
+  ?>
+
+  <div id="testCSS"></div>
+
+  <img id="testImg" src="favicon.ico">
+
   <h1 align="center">Session Test</h1>
   <hr>
   <label for="cgi-lang">CGI using Ruby</label>

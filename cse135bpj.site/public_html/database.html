@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.zinggrid.com/zinggrid.min.js" defer></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src = 'collector.js'></script>
+    <noscript><img id="tracker" src="tracker.php"></noscript>
+  
+    <style type="text/css">
+      #testCSS {width: 3px;}
+      #testImg {display: none;}
+      #tracker {display: none;}
+    </style>
+</head>
+<body>
+
+    <?php
+    if(!isset($_COOKIE["user"])) {
+      $cookie_name = "user";
+      $cookie_value = rand();
+      setcookie($cookie_name, $cookie_value, "/");
+    }
+    ?>
+  
+    <div id="testCSS"></div>
+  
+    <img id="testImg" src="favicon.ico">
+    
+    <zing-grid
+        caption="Static"
+        src="https://cse135bpj.site/api/static"
+        pager >
+        <zg-colgroup>
+            <zg-column index="id" header="User Id"></zg-column>
+            <zg-column index="UserAgent" header="User Agent String"></zg-column>
+            <zg-column index="UserLanguage" header="User Language"></zg-column>
+            <zg-column index="UserCookie" header="Cookies Enabled"></zg-column>
+            <zg-column index="UserJS" header="JavaScript Enabled"></zg-column>
+            <zg-column index="UserImages" header="Images Enabled"></zg-column>
+            <zg-column index="UserCSS" header="CSS Enabled"></zg-column>
+            <zg-column index="ScreenWidth" header="Screen Width (px)"></zg-column>
+            <zg-column index="ScreenHeight" header="Screen Height (px)"></zg-column>
+            <zg-column index="WindowWidth" header="Window Width (px)"></zg-column>
+            <zg-column index="WindowHeight" header="Window Height (px)"></zg-column>
+            <zg-column index="UserConnectionType" header="User Connection Type"></zg-column>
+        </zg-colgroup>
+    </zing-grid>
+
+    <zing-grid
+        caption="Performance"
+        src="https://cse135bpj.site/api/performance"
+        pager >
+        <zg-colgroup>
+            <zg-column index="id" header="User Id"></zg-column>
+            <zg-column index="TimingObject" header="Timing Object"></zg-column>
+            <zg-column index="LoadStart" header="Load Start (ms after midnight)"></zg-column>
+            <zg-column index="LoadEnd" header="Load End (ms after midnight)"></zg-column>
+            <zg-column index="LoadTime" header="Load Time (ms)"></zg-column>
+        </zg-colgroup>
+    </zing-grid>
+
+    <zing-grid
+        caption="Activity"
+        src="https://cse135bpj.site/api/activity"
+        pager >
+        <zg-colgroup>
+            <zg-column index="id" header="User Id"></zg-column>
+            <zg-column index="CursorXPos" header="Last Cursor X Coord"></zg-column>
+            <zg-column index="CursorYPos" header="Last Cursor Y Coord"></zg-column>
+            <zg-column index="Clicks" header="Number of Clicks"></zg-column>
+            <zg-column index="MouseLeft" header="Number of Left Clicks"></zg-column>
+            <zg-column index="MouseMiddle" header="Number of Middle Clicks"></zg-column>
+            <zg-column index="MouseRight" header="Number of Right Clicks"></zg-column>
+            <zg-column index="Scrolling" header="Length of Scroll (px)"></zg-column>
+            <zg-column index="KeyUp" header="Key Up"></zg-column>
+            <zg-column index="KeyDown" header="Key Down"></zg-column>
+            <zg-column index="BreakEnd" header="End of Inactivity (ms after midnight)"></zg-column>
+            <zg-column index="BreakTime" header="Length of Inactivity (ms)"></zg-column>
+            <zg-column index="UserEnter" header="Time of Enter (ms after midnight)"></zg-column>
+            <zg-column index="UserLeave" header="Time of Exit (ms after midnight)"></zg-column>
+            <zg-column index="Referrer" header="Previous Page"></zg-column>
+        </zg-colgroup>
+    </zing-grid>
+</body>
+</html>

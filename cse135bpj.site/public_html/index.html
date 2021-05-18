@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<p id = 'test'> <p>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CSE 135</title>
   <link rel="stylesheet" href="./style.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+  <script src = 'collector.js'></script>
+  <noscript><img id="tracker" src="tracker.php"></noscript>
+
+  <style type="text/css">
+    #testCSS {width: 3px;}
+    #testImg {display: none;}
+    #tracker {display: none;}
+  </style>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-9LQSMFR6MW"></script>
@@ -40,6 +50,19 @@
 </head>
 
 <body>
+
+  <?php
+  if(!isset($_COOKIE["user"])) {
+    $cookie_name = "user";
+    $cookie_value = rand();
+    setcookie($cookie_name, $cookie_value, "/");
+  }
+  ?>
+
+  <div id="testCSS"></div>
+
+  <img id="testImg" src="favicon.ico">
+  
   <div id="content-wrapper">
     <header>
       <h1>CSE 135</h1>
@@ -129,6 +152,15 @@
               <li><a href="/r-cgiform.html">Sessioning </a></li>
             </ul>
           </section>
+        </article>
+      </div>
+      <div id="Homework_3">
+        <h2>Homework 3</h2>
+        <article id="server-side-container">
+          <ul>
+            <li><a href="/database.html">Database Grid</a></li>
+            <li><a href="/hellodataviz.html">Hello Data Viz</a></li>
+          </ul>
         </article>
       </div>
       <div id="Analytics_App">
