@@ -25,7 +25,7 @@ function findUser(username, func) {
         function (error, results, fields) {
             if (error) throw error;
             for(var i = 0; i < results.length; i++) {
-                if ( results[i].username === username ) {
+                if ( results[i].username === username || results[i].email === username) {
                     return func(null, results[i]);
                 }
             }
@@ -53,11 +53,7 @@ passport.use( new LocalStrategy({ usernameField: 'user',
             if ( user == null ) return done(null, false);
             bcrypt.compare(password, user.password, function(err, res) {
                 if (err) return done(err);    
-                if ( !user || !res ) {
-                    return done(null, false, {
-                        'message': 'User/password does not match'
-                    });
-                }
+                if ( !user || !res ) return done(null, false);
                 if ( user.admin ) {
                     isAdmin = true;
                 } else {
