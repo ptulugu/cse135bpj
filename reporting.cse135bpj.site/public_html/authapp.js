@@ -97,7 +97,7 @@ app.get('/logout', function(req, res) {
     isAdmin = false;
     req.logout();
     res.redirect('login');
-})
+});
 
 app.get('/home', ensureAuthenticated, function(req, res) {
     if ( isAdmin ) {
@@ -120,24 +120,24 @@ app.get("/users", ensureAuthenticated, function (req, res) {
 });
 
 //Code taken from stack overflow and modified
-app.post('/register', function(req, res, next) {
-    let body = req.body;
-    bcrypt.genSalt(10, function(err, salt) {
-      if (err) return next(err);
-      bcrypt.hash(req.body.password, salt, function(err, hash) {
-        body.password = hash;
-        if (err) return next(err);
-        connection.query(
-        `INSERT INTO users SET ?`,
-        body,
-        function (error, results, fields) {
-          if (error) throw error;
-          res.status(201);
-          res.send(req.body);
-        });
-      });
-    });
-  });
+// app.post('/register', function(req, res, next) {
+//     let body = req.body;
+//     bcrypt.genSalt(10, function(err, salt) {
+//       if (err) return next(err);
+//       bcrypt.hash(req.body.password, salt, function(err, hash) {
+//         body.password = hash;
+//         if (err) return next(err);
+//         connection.query(
+//         `INSERT INTO users SET ?`,
+//         body,
+//         function (error, results, fields) {
+//           if (error) throw error;
+//           res.status(201);
+//           res.send(req.body);
+//         });
+//       });
+//     });
+//   });
 
 // CRUD
 app.get("/userapi", ensureAuthenticated, function (req, res) {
@@ -176,15 +176,21 @@ app.get("/userapi/:id", function (req, res, next) {
 
 app.post("/userapi", function (req, res, next) {
     let body = req.body;
-    connection.query(
-        `INSERT INTO users SET ?`,
-        body,
-        function (error, results, fields) {
-            if (error) throw error;
-            res.status(201);
-            res.send(body);
-        }
-    );
+    bcrypt.genSalt(10, function(err, salt) {
+        if (err) return next(err);
+        bcrypt.hash(body.password, salt, function(err, hash) {
+            body.password = hash;
+            connection.query(
+                `INSERT INTO users SET ?`,
+                body,
+                function (error, results, fields) {
+                    if (error) throw error;
+                    res.status(201);
+                    res.send(body);
+                }
+            );
+        });
+    });
 });
 
 app.delete("/userapi/:id", function (req, res, next) {
