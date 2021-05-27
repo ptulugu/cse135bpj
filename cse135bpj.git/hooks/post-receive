@@ -1,2 +1,0 @@
-#!/bin/sh
-git --work-tree=/var/www/ --git-dir=/var/www/cse135bpj.git checkout -f
