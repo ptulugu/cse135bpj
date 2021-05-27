@@ -119,26 +119,6 @@ app.get("/users", ensureAuthenticated, function (req, res) {
     }
 });
 
-//Code taken from stack overflow and modified
-// app.post('/register', function(req, res, next) {
-//     let body = req.body;
-//     bcrypt.genSalt(10, function(err, salt) {
-//       if (err) return next(err);
-//       bcrypt.hash(req.body.password, salt, function(err, hash) {
-//         body.password = hash;
-//         if (err) return next(err);
-//         connection.query(
-//         `INSERT INTO users SET ?`,
-//         body,
-//         function (error, results, fields) {
-//           if (error) throw error;
-//           res.status(201);
-//           res.send(req.body);
-//         });
-//       });
-//     });
-//   });
-
 // CRUD
 app.get("/userapi", ensureAuthenticated, function (req, res) {
     connection.query(
@@ -179,6 +159,7 @@ app.post("/userapi", function (req, res, next) {
     bcrypt.genSalt(10, function(err, salt) {
         if (err) return next(err);
         bcrypt.hash(body.password, salt, function(err, hash) {
+            if (err) return next(err);
             body.password = hash;
             connection.query(
                 `INSERT INTO users SET ?`,
@@ -214,15 +195,34 @@ app.delete("/userapi/:id", function (req, res, next) {
 app.patch("/userapi/:id", function (req, res, next) {
     let body = req.body;
     let id = req.params.id;
-    connection.query(
-        `UPDATE users SET ? WHERE id=?`,
-        [body, id],
-        function (error, results, fields) {
-            if (error) throw error;
-            res.status(200);
-            res.send(body);
-        }
-    );
+    if(body.password != null) {
+        bcrypt.genSalt(10, function(err, salt) {
+            if (err) return next(err);
+            bcrypt.hash(body.password, salt, function(err, hash) {
+                if (err) return next(err);
+                body.password = hash;
+                connection.query(
+                    `UPDATE users SET ? WHERE id=?`,
+                    [body, id],
+                    function (error, results, fields) {
+                        if (error) throw error;
+                        res.status(200);
+                        res.send(body);
+                    }
+                );
+            });
+        });
+    } else {
+        connection.query(
+            `UPDATE users SET ? WHERE id=?`,
+            [body, id],
+            function (error, results, fields) {
+                if (error) throw error;
+                res.status(200);
+                res.send(body);
+            }
+        );
+    }
 });
 
 app.listen(port);
