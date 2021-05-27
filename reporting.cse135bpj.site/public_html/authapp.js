@@ -97,7 +97,7 @@ app.get('/logout', function(req, res) {
     isAdmin = false;
     req.logout();
     res.redirect('login');
-});
+})
 
 app.get('/home', ensureAuthenticated, function(req, res) {
     if ( isAdmin ) {
