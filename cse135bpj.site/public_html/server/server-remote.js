@@ -30,7 +30,13 @@ app.get("/static", function (req, res, next) {
         "SELECT * FROM static",
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if ( results.length === 0 ) {
+                res.status(404);
+                res.send("Static is empty");
+            } else {
+                res.status(200);
+                res.send(results);
+            }
         }
     );
 });
@@ -42,7 +48,13 @@ app.get("/static/:id", function (req, res, next) {
         id,
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if ( results.length === 0 ) {
+                res.status(404);
+                res.send("Entry does not exist");
+            } else {
+                res.status(200);
+                res.send(results);
+            }
         }
     );
 });
@@ -54,7 +66,7 @@ app.post("/static", function (req, res, next) {
         body,
         function (error, results, fields) {
             if (error) throw error;
-            body["id"] = results["insertId"];
+            res.status(201);
             res.send(body);
         }
     );
@@ -67,7 +79,13 @@ app.delete("/static/:id", function (req, res, next) {
         id,
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if (results.affectedRows != 0) {
+                res.status(200);
+                res.send();
+            } else {
+                res.status(404);
+                res.send();
+            }
         }
     );
 });
@@ -80,7 +98,8 @@ app.put("/static/:id", function (req, res, next) {
         [body, id],
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            res.status(200);
+            res.send(body);
         }
     );
 });
@@ -90,7 +109,13 @@ app.get("/performance", function (req, res, next) {
         "SELECT * FROM performance",
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if ( results.length === 0 ) {
+                res.status(404);
+                res.send("Performance is empty");
+            } else {
+                res.status(200);
+                res.send(results);
+            }
         }
     );
 });
@@ -102,7 +127,13 @@ app.get("/performance/:id", function (req, res, next) {
         id,
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if ( results.length === 0 ) {
+                res.status(404);
+                res.send("Entry does not exist");
+            } else {
+                res.status(200);
+                res.send(results);
+            }
         }
     );
 });
@@ -114,7 +145,7 @@ app.post("/performance", function (req, res, next) {
         body,
         function (error, results, fields) {
             if (error) throw error;
-            body["id"] = results["insertId"];
+            res.status(201);
             res.send(body);
         }
     );
@@ -127,7 +158,13 @@ app.delete("/performance/:id", function (req, res, next) {
         id,
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if (results.affectedRows != 0) {
+                res.status(200);
+                res.send();
+            } else {
+                res.status(404);
+                res.send();
+            }
         }
     );
 });
@@ -140,7 +177,8 @@ app.put("/performance/:id", function (req, res, next) {
         [body, id],
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            res.status(200);
+            res.send(body);
         }
     );
 });
@@ -150,7 +188,13 @@ app.get("/activity", function (req, res, next) {
         "SELECT * FROM activity",
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if ( results.length === 0 ) {
+                res.status(404);
+                res.send("Activity is empty");
+            } else {
+                res.status(200);
+                res.send(results);
+            }
         }
     );
 });
@@ -162,7 +206,13 @@ app.get("/activity/:id", function (req, res, next) {
         id,
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if ( results.length === 0 ) {
+                res.status(404);
+                res.send("Entry does not exist");
+            } else {
+                res.status(200);
+                res.send(results);
+            }
         }
     );
 });
@@ -174,7 +224,7 @@ app.post("/activity", function (req, res, next) {
         body,
         function (error, results, fields) {
             if (error) throw error;
-            body["id"] = results["insertId"];
+            res.status(201);
             res.send(body);
         }
     );
@@ -187,7 +237,13 @@ app.delete("/activity/:id", function (req, res, next) {
         id,
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            if (results.affectedRows != 0) {
+                res.status(200);
+                res.send();
+            } else {
+                res.status(404);
+                res.send();
+            }
         }
     );
 });
@@ -195,16 +251,15 @@ app.delete("/activity/:id", function (req, res, next) {
 app.put("/activity/:id", function (req, res, next) {
     let body = req.body;
     let id = req.params.id;
-    console.log(body)
-    console.log(id)
     connection.query(
         "UPDATE activity SET ? WHERE id=?",
         [body, id],
         function (error, results, fields) {
             if (error) throw error;
-            res.send(results);
+            res.status(200);
+            res.send(body);
         }
     );
 });
 
-app.listen(3000);
+app.listen(3002);

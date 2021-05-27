@@ -8,28 +8,28 @@ window.addEventListener('load', () => {
     var freshLoad = true;
 
     fetch('https://cse135bpj.site/api/static/')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(obj => {
-                let userId = parseInt(obj[Object.keys(obj)[0]])
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(obj => {
+            let userId = parseInt(obj[Object.keys(obj)[0]])
 
-                if (userId == cookieValue) {
-                    freshLoad = false;
-                }
-
-            })
-
-            if (freshLoad) {
-                loadStatic();
-                loadPerformance();
-                loadActivity();
-            } else {
-                putReferrer();
+            if (userId == cookieValue) {
+                freshLoad = false;
             }
+
         })
-        .catch((error) => {
-            console.error("Error:", error);
-        })
+
+        if (freshLoad) {
+            loadStatic();
+            loadPerformance();
+            loadActivity();
+        } else {
+            putReferrer();
+        }
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
 
 });
 
@@ -44,13 +44,13 @@ function putReferrer() {
             "Referrer": document.referrer
         })
     })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Success:", data);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log("Success:", data);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
 }
 
 var enabledCSS = true;
@@ -90,13 +90,13 @@ function loadStatic() {
         },
         body: JSON.stringify(data),
     })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Success:", data);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log("Success:", data);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
 }
 
 function loadPerformance() {
@@ -126,14 +126,13 @@ function loadPerformance() {
         },
         body: JSON.stringify(data),
     })
-        .then(response => response.json())
-        .then(data => {
-            
-            console.log("Success:", data);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log("Success:", data);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
 }
 
 function loadActivity() {
@@ -167,13 +166,13 @@ function loadActivity() {
         },
         body: JSON.stringify(data),
     })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Success:", data);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log("Success:", data);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
 }
 
 /*
@@ -204,13 +203,13 @@ function putMouseCoord(xCoord, yCoord) {
             "CursorYPos": yCoord
         })
     })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Success:", data);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log("Success:", data);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
 }
 
 /*
@@ -235,50 +234,50 @@ document.addEventListener('mousedown', event => {
 function putClick(leftClick, middleClick, rightClick) {
 
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
+    .then(response => response.json())
+    .then(data => {
+
+        let totalLeftClicks;
+        let totalMiddleClicks;
+        let totalRightClicks;
+
+        totalClicks = data[0].Clicks + 1;
+        if (leftClick) {
+            totalLeftClicks = data[0].MouseLeft + 1;
+        } else if (middleClick) {
+            totalMiddleClicks = data[0].MouseMiddle + 1;
+        } else {
+            totalRightClicks = data[0].MouseRight + 1;
+        }
+
+        leftClick = false;
+        middleClick = false;
+        rightClick = false;
+
+        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+            },
+            body: JSON.stringify({
+                "Clicks": totalClicks,
+                "MouseLeft": totalLeftClicks,
+                "MouseMiddle": totalMiddleClicks,
+                "MouseRight": totalRightClicks
+            })
+        })
         .then(response => response.json())
         .then(data => {
-
-            let totalLeftClicks;
-            let totalMiddleClicks;
-            let totalRightClicks;
-
-            totalClicks = data[0].Clicks + 1;
-            if (leftClick) {
-                totalLeftClicks = data[0].MouseLeft + 1;
-            } else if (middleClick) {
-                totalMiddleClicks = data[0].MouseMiddle + 1;
-            } else {
-                totalRightClicks = data[0].MouseRight + 1;
-            }
-
-            leftClick = false;
-            middleClick = false;
-            rightClick = false;
-
-            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-                },
-                body: JSON.stringify({
-                    "Clicks": totalClicks,
-                    "MouseLeft": totalLeftClicks,
-                    "MouseMiddle": totalMiddleClicks,
-                    "MouseRight": totalRightClicks
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Success:", data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            console.log("Success:", data);
         })
         .catch((error) => {
             console.error("Error:", error);
-        })
+        });
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
 }
 
 /*
@@ -291,29 +290,29 @@ document.addEventListener('wheel', e => {
 function putScroll(scrollOffset) {
 
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
+    .then(response => response.json())
+    .then(data => {
+        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+            },
+            body: JSON.stringify({
+                "Scrolling": scrollOffset
+            })
+        })
         .then(response => response.json())
         .then(data => {
-            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-                },
-                body: JSON.stringify({
-                    "Scrolling": scrollOffset
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Success:", data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            console.log("Success:", data);
         })
         .catch((error) => {
             console.error("Error:", error);
-        })
+        });
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
 }
 
 /*
@@ -328,53 +327,52 @@ function putKeyDown(keyDown) {
     var keyDownString = "";
 
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
+    .then(response => response.json())
+    .then(data => {
+        keyDownString = data[0].KeyDown;
+
+        if(keyDownString === "") {
+            keyDownString = keyDown.toString();
+        } else {
+            keyDownString = keyDownString + ", " + keyDown.toString();
+        }
+
+        let keyDownArray = keyDownString.split(",");
+        let newKeyDownString = "";
+
+        if(keyDownArray.length > 10) {
+            for(i=1; i < keyDownArray.length; i++) {
+                if(newKeyDownString === "") {
+                    newKeyDownString = keyDownArray[i];
+                } else {
+                    newKeyDownString = newKeyDownString + ", " + keyDownArray[i];
+                }
+            }
+        } else {
+            newKeyDownString = keyDownString;
+        }
+
+        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+            },
+            body: JSON.stringify({
+                "KeyDown": newKeyDownString
+            })
+        })
         .then(response => response.json())
         .then(data => {
-            keyDownString = data[0].KeyDown;
-
-            if(keyDownString === "") {
-                keyDownString = keyDown.toString();
-            } else {
-                keyDownString = keyDownString + ", " + keyDown.toString();
-            }
-
-
-            let keyDownArray = keyDownString.split(",");
-            let newKeyDownString = "";
-
-            if(keyDownArray.length > 10) {
-                for(i=1; i < keyDownArray.length; i++) {
-                    if(newKeyDownString === "") {
-                        newKeyDownString = keyDownArray[i];
-                    } else {
-                        newKeyDownString = newKeyDownString + ", " + keyDownArray[i];
-                    }
-                }
-            } else {
-                newKeyDownString = keyDownString;
-            }
-
-            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-                },
-                body: JSON.stringify({
-                    "KeyDown": newKeyDownString
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Success:", data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            console.log("Success:", data);
         })
         .catch((error) => {
             console.error("Error:", error);
-        })
+        });
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
 }
 
 document.addEventListener('keyup', (event) => {
@@ -386,52 +384,52 @@ function putKeyUp(keyUp) {
     var keyUpString = "";
 
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
+    .then(response => response.json())
+    .then(data => {
+        keyUpString = data[0].KeyUp;
+        if(keyUpString === "") {
+            keyUpString = keyUp.toString();
+        } else {
+            keyUpString = keyUpString + ", " + keyUp.toString();
+        }
+
+
+        let keyUpArray = keyUpString.split(",");
+        let newKeyUpString = "";
+
+        if(keyUpArray.length > 10) {
+            for(i=1; i < keyUpArray.length; i++) {
+                if(newKeyUpString === "") {
+                    newKeyUpString = keyUpArray[i];
+                } else {
+                    newKeyUpString = newKeyUpString + ", " + keyUpArray[i];
+                }
+            }
+        } else {
+            newKeyUpString = keyUpString;
+        }
+
+        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+            },
+            body: JSON.stringify({
+                "KeyUp": newKeyUpString
+            })
+        })
         .then(response => response.json())
         .then(data => {
-            keyUpString = data[0].KeyUp;
-            if(keyUpString === "") {
-                keyUpString = keyUp.toString();
-            } else {
-                keyUpString = keyUpString + ", " + keyUp.toString();
-            }
-
-
-            let keyUpArray = keyUpString.split(",");
-            let newKeyUpString = "";
-
-            if(keyUpArray.length > 10) {
-                for(i=1; i < keyUpArray.length; i++) {
-                    if(newKeyUpString === "") {
-                        newKeyUpString = keyUpArray[i];
-                    } else {
-                        newKeyUpString = newKeyUpString + ", " + keyUpArray[i];
-                    }
-                }
-            } else {
-                newKeyUpString = keyUpString;
-            }
-
-            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-                },
-                body: JSON.stringify({
-                    "KeyUp": newKeyUpString
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Success:", data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            console.log("Success:", data);
         })
         .catch((error) => {
             console.error("Error:", error);
-        })
+        });
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
 }
 
 /*
@@ -455,13 +453,13 @@ function putEndTime(endTime) {
             "UserLeave": endTime
         })
     })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Success:", data);
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-        })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Success:", data);
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
 }
 
 /*
@@ -519,52 +517,52 @@ function putBreaks(breakTime, breakEnd) {
 
     var breakString = "";
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
+    .then(response => response.json())
+    .then(data => {
+        breakString = data[0].BreakTime;
+        if(breakString === "") {
+            breakString = breakTime;
+        } else {
+            breakString = breakString + ", " + breakTime;
+        }
+
+        breakString = '' + breakString;
+        let breakArray = breakString.split(",");
+        let newbreakString = "";
+
+
+        if(breakArray.length > 11) {
+            for(i=1; i < breakArray.length; i++) {
+                if(newbreakString === "") {
+                    newbreakString = breakArray[i];
+                } else {
+                    newbreakString = newbreakString + ", " + breakArray[i];
+                }
+            }
+        } else {
+            newbreakString = breakString;
+        }
+
+        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+            },
+            body: JSON.stringify({
+                "BreakEnd": breakEnd,
+                "BreakTime": newbreakString
+            })
+        })
         .then(response => response.json())
         .then(data => {
-            breakString = data[0].BreakTime;
-            if(breakString === "") {
-                breakString = breakTime;
-            } else {
-                breakString = breakString + ", " + breakTime;
-            }
-
-            breakString = '' + breakString;
-            let breakArray = breakString.split(",");
-            let newbreakString = "";
-
-
-            if(breakArray.length > 11) {
-                for(i=1; i < breakArray.length; i++) {
-                    if(newbreakString === "") {
-                        newbreakString = breakArray[i];
-                    } else {
-                        newbreakString = newbreakString + ", " + breakArray[i];
-                    }
-                }
-            } else {
-                newbreakString = breakString;
-            }
-
-            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-                },
-                body: JSON.stringify({
-                    "BreakEnd": breakEnd,
-                    "BreakTime": newbreakString
-                })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Success:", data);
-                })
-                .catch((error) => {
-                    console.error("Error:", error);
-                });
+            console.log("Success:", data);
         })
         .catch((error) => {
             console.error("Error:", error);
-        })
+        });
+    })
+    .catch((error) => {
+        console.error("Error:", error);
+    })
 }
