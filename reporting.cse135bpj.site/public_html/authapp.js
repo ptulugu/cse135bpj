@@ -4,9 +4,9 @@ const body    = require("body-parser");
 const mysql   = require("mysql");
 const app     = express();
 const port    = 3003;
-
 const passport      = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require('bcryptjs');
 
 var isAdmin = false;
 
@@ -47,19 +47,24 @@ passport.deserializeUser(function(username, done) {
 passport.use( new LocalStrategy({ usernameField: 'user',
                                   passwordField: 'pass' },
     function(username, password, done) {
-        findUser(username, function(err, user) {
+	
+	    findUser(username, function(err, user) {
             if ( err ) { return done(err); }
-            if ( !user || user.password != password ) {
-                return done(null, false, {
-                    'message': 'User/password does not match'
-                });
-            }
-            if ( user.admin ) {
-                isAdmin = true;
-            } else {
-                isAdmin = false;
-            }
-            return done(null, user);
+            if ( user == null ) return done(null, false);
+            bcrypt.compare(password, user.password, function(err, res) {
+                if (err) return done(err);    
+                if ( !user || !res ) {
+                    return done(null, false, {
+                        'message': 'User/password does not match'
+                    });
+                }
+                if ( user.admin ) {
+                    isAdmin = true;
+                } else {
+                    isAdmin = false;
+                }
+                return done(null, user);
+            });
         });
     }
 ));
@@ -113,6 +118,26 @@ app.get("/users", ensureAuthenticated, function (req, res) {
         res.sendFile('public/unauthorized.html', { root: __dirname });
     }
 });
+
+//Code taken from stack overflow and modified
+app.post('/register', function(req, res, next) {
+    let body = req.body;
+    bcrypt.genSalt(10, function(err, salt) {
+      if (err) return next(err);
+      bcrypt.hash(req.body.password, salt, function(err, hash) {
+        body.password = hash;
+        if (err) return next(err);
+        connection.query(
+        `INSERT INTO users SET ?`,
+        body,
+        function (error, results, fields) {
+          if (error) throw error;
+          res.status(201);
+          res.send(req.body);
+        });
+      });
+    });
+  });
 
 // CRUD
 app.get("/userapi", ensureAuthenticated, function (req, res) {
