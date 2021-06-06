@@ -77,6 +77,10 @@ function ensureAuthenticated(req, res, next) {
     res.redirect('login');
 }
 
+app.get('/dbConnect.php', function(req, res) {
+    res.sendFile('dbConnect.php', { root: __dirname });
+})
+
 app.get('/', function(req, res) {
     res.sendFile('public/login.html', { root: __dirname });
 })

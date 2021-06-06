@@ -1,37 +1,192 @@
 // Get cookie
 const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user=')).split('=')[1];
+// var jsonId = 0;
+// var totalPageViews = 0;
 
 /*
     Initialization on load
 */
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', function () {
     var freshLoad = true;
 
     fetch('https://cse135bpj.site/api/static/')
-    .then(response => response.json())
-    .then(data => {
-        data.forEach(obj => {
-            let userId = parseInt(obj[Object.keys(obj)[0]])
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(obj => {
+                let userId = parseInt(obj[Object.keys(obj)[0]])
 
-            if (userId == cookieValue) {
-                freshLoad = false;
+                if (userId == cookieValue) {
+                    freshLoad = false;
+                }
+
+            })
+
+            if (freshLoad) {
+                loadStatic();
+                loadPerformance();
+                loadActivity();
+            } else {
+                putAnalytics();
+                putReferrer();
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        })
+});
+
+function putAnalytics() {
+    fetch('https://cse135bpj.site/api/activity/' + cookieValue)
+        .then(response => response.json())
+        .then(data => {
+
+            let metrics = JSON.parse(data[0].Metrics);
+            let oldPage = false;
+            let indexNum = -1;
+
+            for (var i = 0; i < metrics.length; i++) {
+                if (metrics[i].Site === document.location.href) {
+                    oldPage = true;
+                    indexNum = i;
+                }
+            }
+        
+
+
+
+            if (oldPage) {
+                let id = metrics[indexNum].id
+                let pageViews = metrics[indexNum].PageViews;
+                let inactivity = metrics[indexNum].AvgInactivity;
+
+                pageViews += 1;
+
+                var data = {
+                    "id": id,
+                    "Site": window.location.href,
+                    "PageViews": pageViews,
+                    "AvgInactivity": inactivity
+                };
+
+                metrics.splice(indexNum, 1, data);
+
+                metrics = JSON.stringify(metrics)
+
+                fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+                    },
+                    body: JSON.stringify({ "Metrics": metrics })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Success:", data);
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+
+            } else {
+                console.log('else')
+                let id = metrics[metrics.length - 1].id;
+                let inactivity = metrics[metrics.length - 1].AvgInactivity;
+                id += 1;
+
+                var data = {
+                    "id": id,
+                    "Site": window.location.href,
+                    "PageViews": 1,
+                    "AvgInactivity": inactivity
+                }
+
+                metrics.push(data);
+
+                metrics = JSON.stringify(metrics);
+                console.log(metrics)
+
+                fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+                    },
+                    body: JSON.stringify({
+                        "Metrics": metrics
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Success:", data);
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
             }
 
+        });
+}
+
+function resetUniqueVisitors(id) {
+    fetch('https://cse135bpj.site/api/static/' + id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+        },
+        body: JSON.stringify({
+            "UniqueVisitor": JSON.stringify(0)
         })
-
-        if (freshLoad) {
-            loadStatic();
-            loadPerformance();
-            loadActivity();
-        } else {
-            putReferrer();
-        }
     })
-    .catch((error) => {
-        console.error("Error:", error);
-    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+}
 
-});
+function putDate(date) {
+    fetch('https://cse135bpj.site/api/static/' + cookieValue, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+        },
+        body: JSON.stringify({
+            "LoadDateObject": JSON.stringify(date)
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+}
+
+function putUniqueVisitor(uniqueVisitor) {
+    fetch('https://cse135bpj.site/api/static/' + cookieValue, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+        },
+        body: JSON.stringify({
+            "UniqueVisitor": uniqueVisitor
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+}
 
 function putReferrer() {
     fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
@@ -44,13 +199,13 @@ function putReferrer() {
             "Referrer": document.referrer
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
 }
 
 var enabledCSS = true;
@@ -63,9 +218,11 @@ function loadStatic() {
     }
 
     var img = document.getElementById('testImg');
-    if(img.width === 0 && img.height === 0) {
+    if (img.width === 0 && img.height === 0) {
         enabledImg = false;
     }
+
+    var loadDate = new Date();
 
     var data = {
         "id": cookieValue,
@@ -79,7 +236,9 @@ function loadStatic() {
         "ScreenHeight": screen.height,
         "WindowWidth": window.innerWidth,
         "WindowHeight": window.innerHeight,
-        "UserConnectionType": navigator.connection.effectiveType
+        "UserConnectionType": navigator.connection.effectiveType,
+        "LoadDateObject": JSON.stringify(loadDate),
+        "UniqueVisitor": 1
     };
 
     fetch('https://cse135bpj.site/api/static', {
@@ -90,13 +249,56 @@ function loadStatic() {
         },
         body: JSON.stringify(data),
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
+
+    var currDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles", timeZoneName: "short" });
+    var currDay = currDate.split(',')[0].split('/')[1];
+    var currMonth = currDate.split(',')[0].split('/')[0];
+    var currYear = currDate.split(',')[0].split('/')[2];
+
+    fetch('https://cse135bpj.site/api/static/')
+        .then(response => response.json())
+        .then(data => {
+            var max = 0;
+            data.forEach(obj => {
+                let checkDate = obj[Object.keys(obj)[12]].split(',')[0].split('/')[1];
+                if (checkDate > max) {
+                    max = checkDate;
+                }
+            })
+            if (max > currDay) {
+                data.forEach(obj => {
+                    resetUniqueVisitors(obj[Object.keys(obj)[0]]);
+                })
+            }
+        })
+
+    fetch('https://cse135bpj.site/api/static/' + cookieValue)
+        .then(response => response.json())
+        .then(data => {
+
+            var prevDate = data[0].LoadDateObject.split(',')[0].split('/');
+            var prevDay = parseInt(prevDate[0].split("\"")[1]);
+            var prevMonth = parseInt(prevDate[1]);
+            var prevYear = parseInt(prevDate[2]);
+            var uniqueVisitor;
+
+            putDate(currDate);
+
+            if (prevDay != currDay || prevMonth != currMonth || prevYear != currYear) {
+                uniqueVisitor = 1;
+                putUniqueVisitor(uniqueVisitor);
+            }
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        })
 }
 
 function loadPerformance() {
@@ -106,7 +308,7 @@ function loadPerformance() {
 
     let d = new Date();
     let e = window.performance.timing.navigationStart
-    var loadStart = e - d.setHours(0,0,0,0);
+    var loadStart = e - d.setHours(0, 0, 0, 0);
     let f = window.performance.timing.domContentLoadedEventEnd
     var loadEnd = f - d;
 
@@ -126,19 +328,24 @@ function loadPerformance() {
         },
         body: JSON.stringify(data),
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
 }
 
 function loadActivity() {
-    let g = new Date();
-    let h = new Date().getTime();
-    var beginTime = h - g.setHours(0,0,0,0);
+    var beginTime = new Date().getTime();
+
+    var metrics = [{
+        "id": 0,
+        "Site": window.location.href,
+        "PageViews": 1,
+        "AvgInactivity": 1000
+    }];
 
     var data = {
         "id": cookieValue,
@@ -155,7 +362,8 @@ function loadActivity() {
         "BreakTime": "",
         "UserEnter": JSON.stringify(beginTime),
         "UserLeave": "",
-        "Referrer": ""
+        "Referrer": "",
+        "Metrics": JSON.stringify(metrics)
     };
 
     fetch('https://cse135bpj.site/api/activity', {
@@ -166,13 +374,13 @@ function loadActivity() {
         },
         body: JSON.stringify(data),
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
 }
 
 /*
@@ -186,7 +394,7 @@ window.addEventListener('mousemove', (event) => {
     yCoord = event.pageY;
 });
 setInterval(function () {
-    if(typeof xCoord !== 'undefined' || typeof yCoord !== 'undefined') {
+    if (typeof xCoord !== 'undefined' || typeof yCoord !== 'undefined') {
         putMouseCoord(xCoord, yCoord);
     }
 }, 3000);
@@ -203,13 +411,13 @@ function putMouseCoord(xCoord, yCoord) {
             "CursorYPos": yCoord
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
 }
 
 /*
@@ -234,50 +442,51 @@ document.addEventListener('mousedown', event => {
 function putClick(leftClick, middleClick, rightClick) {
 
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
-    .then(response => response.json())
-    .then(data => {
-
-        let totalLeftClicks;
-        let totalMiddleClicks;
-        let totalRightClicks;
-
-        totalClicks = data[0].Clicks + 1;
-        if (leftClick) {
-            totalLeftClicks = data[0].MouseLeft + 1;
-        } else if (middleClick) {
-            totalMiddleClicks = data[0].MouseMiddle + 1;
-        } else {
-            totalRightClicks = data[0].MouseRight + 1;
-        }
-
-        leftClick = false;
-        middleClick = false;
-        rightClick = false;
-
-        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-            },
-            body: JSON.stringify({
-                "Clicks": totalClicks,
-                "MouseLeft": totalLeftClicks,
-                "MouseMiddle": totalMiddleClicks,
-                "MouseRight": totalRightClicks
-            })
-        })
         .then(response => response.json())
         .then(data => {
-            console.log("Success:", data);
+
+            let totalLeftClicks;
+            let totalMiddleClicks;
+            let totalRightClicks;
+            let totalClicks;
+
+            totalClicks = data[0].Clicks + 1;
+            if (leftClick) {
+                totalLeftClicks = data[0].MouseLeft + 1;
+            } else if (middleClick) {
+                totalMiddleClicks = data[0].MouseMiddle + 1;
+            } else {
+                totalRightClicks = data[0].MouseRight + 1;
+            }
+
+            leftClick = false;
+            middleClick = false;
+            rightClick = false;
+
+            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+                },
+                body: JSON.stringify({
+                    "Clicks": totalClicks,
+                    "MouseLeft": totalLeftClicks,
+                    "MouseMiddle": totalMiddleClicks,
+                    "MouseRight": totalRightClicks
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         })
         .catch((error) => {
             console.error("Error:", error);
-        });
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    })
+        })
 }
 
 /*
@@ -290,29 +499,29 @@ document.addEventListener('wheel', e => {
 function putScroll(scrollOffset) {
 
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
-    .then(response => response.json())
-    .then(data => {
-        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-            },
-            body: JSON.stringify({
-                "Scrolling": scrollOffset
-            })
-        })
         .then(response => response.json())
         .then(data => {
-            console.log("Success:", data);
+            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+                },
+                body: JSON.stringify({
+                    "Scrolling": scrollOffset
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         })
         .catch((error) => {
             console.error("Error:", error);
-        });
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    })
+        })
 }
 
 /*
@@ -327,52 +536,52 @@ function putKeyDown(keyDown) {
     var keyDownString = "";
 
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
-    .then(response => response.json())
-    .then(data => {
-        keyDownString = data[0].KeyDown;
-
-        if(keyDownString === "") {
-            keyDownString = keyDown.toString();
-        } else {
-            keyDownString = keyDownString + ", " + keyDown.toString();
-        }
-
-        let keyDownArray = keyDownString.split(",");
-        let newKeyDownString = "";
-
-        if(keyDownArray.length > 10) {
-            for(i=1; i < keyDownArray.length; i++) {
-                if(newKeyDownString === "") {
-                    newKeyDownString = keyDownArray[i];
-                } else {
-                    newKeyDownString = newKeyDownString + ", " + keyDownArray[i];
-                }
-            }
-        } else {
-            newKeyDownString = keyDownString;
-        }
-
-        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-            },
-            body: JSON.stringify({
-                "KeyDown": newKeyDownString
-            })
-        })
         .then(response => response.json())
         .then(data => {
-            console.log("Success:", data);
+            keyDownString = data[0].KeyDown;
+
+            if (keyDownString === "") {
+                keyDownString = keyDown.toString();
+            } else {
+                keyDownString = keyDownString + ", " + keyDown.toString();
+            }
+
+            let keyDownArray = keyDownString.split(",");
+            let newKeyDownString = "";
+
+            if (keyDownArray.length > 10) {
+                for (i = 1; i < keyDownArray.length; i++) {
+                    if (newKeyDownString === "") {
+                        newKeyDownString = keyDownArray[i];
+                    } else {
+                        newKeyDownString = newKeyDownString + ", " + keyDownArray[i];
+                    }
+                }
+            } else {
+                newKeyDownString = keyDownString;
+            }
+
+            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+                },
+                body: JSON.stringify({
+                    "KeyDown": newKeyDownString
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         })
         .catch((error) => {
             console.error("Error:", error);
-        });
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    })
+        })
 }
 
 document.addEventListener('keyup', (event) => {
@@ -384,61 +593,59 @@ function putKeyUp(keyUp) {
     var keyUpString = "";
 
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
-    .then(response => response.json())
-    .then(data => {
-        keyUpString = data[0].KeyUp;
-        if(keyUpString === "") {
-            keyUpString = keyUp.toString();
-        } else {
-            keyUpString = keyUpString + ", " + keyUp.toString();
-        }
-
-
-        let keyUpArray = keyUpString.split(",");
-        let newKeyUpString = "";
-
-        if(keyUpArray.length > 10) {
-            for(i=1; i < keyUpArray.length; i++) {
-                if(newKeyUpString === "") {
-                    newKeyUpString = keyUpArray[i];
-                } else {
-                    newKeyUpString = newKeyUpString + ", " + keyUpArray[i];
-                }
-            }
-        } else {
-            newKeyUpString = keyUpString;
-        }
-
-        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-            },
-            body: JSON.stringify({
-                "KeyUp": newKeyUpString
-            })
-        })
         .then(response => response.json())
         .then(data => {
-            console.log("Success:", data);
+            keyUpString = data[0].KeyUp;
+            if (keyUpString === "") {
+                keyUpString = keyUp.toString();
+            } else {
+                keyUpString = keyUpString + ", " + keyUp.toString();
+            }
+
+
+            let keyUpArray = keyUpString.split(",");
+            let newKeyUpString = "";
+
+            if (keyUpArray.length > 10) {
+                for (i = 1; i < keyUpArray.length; i++) {
+                    if (newKeyUpString === "") {
+                        newKeyUpString = keyUpArray[i];
+                    } else {
+                        newKeyUpString = newKeyUpString + ", " + keyUpArray[i];
+                    }
+                }
+            } else {
+                newKeyUpString = keyUpString;
+            }
+
+            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+                },
+                body: JSON.stringify({
+                    "KeyUp": newKeyUpString
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         })
         .catch((error) => {
             console.error("Error:", error);
-        });
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    })
+        })
 }
 
 /*
     Leaving page
 */
 window.addEventListener('beforeunload', (event) => {
-    let y = new Date();
-    let z = new Date().getTime();
-    var endTime = z - y.setHours(0,0,0,0);
+    var endTime = new Date().getTime();
     putEndTime(endTime);
 });
 
@@ -453,13 +660,13 @@ function putEndTime(endTime) {
             "UserLeave": endTime
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log("Success:", data);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        })
 }
 
 /*
@@ -487,7 +694,7 @@ function resetTimer() {
     let breakTime = 0;
     if (breakStart != 0) {
         breakTime = breakEnd - breakStart;
-        if(!Number.isNaN(breakTime)) {
+        if (!Number.isNaN(breakTime)) {
             putBreaks(breakTime, breakEnd);
         }
     }
@@ -517,52 +724,52 @@ function putBreaks(breakTime, breakEnd) {
 
     var breakString = "";
     fetch('https://cse135bpj.site/api/activity/' + cookieValue)
-    .then(response => response.json())
-    .then(data => {
-        breakString = data[0].BreakTime;
-        if(breakString === "") {
-            breakString = breakTime;
-        } else {
-            breakString = breakString + ", " + breakTime;
-        }
-
-        breakString = '' + breakString;
-        let breakArray = breakString.split(",");
-        let newbreakString = "";
-
-
-        if(breakArray.length > 11) {
-            for(i=1; i < breakArray.length; i++) {
-                if(newbreakString === "") {
-                    newbreakString = breakArray[i];
-                } else {
-                    newbreakString = newbreakString + ", " + breakArray[i];
-                }
-            }
-        } else {
-            newbreakString = breakString;
-        }
-
-        return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
-            },
-            body: JSON.stringify({
-                "BreakEnd": breakEnd,
-                "BreakTime": newbreakString
-            })
-        })
         .then(response => response.json())
         .then(data => {
-            console.log("Success:", data);
+            breakString = data[0].BreakTime;
+            if (breakString === "") {
+                breakString = breakTime;
+            } else {
+                breakString = breakString + ", " + breakTime;
+            }
+
+            breakString = '' + breakString;
+            let breakArray = breakString.split(",");
+            let newbreakString = "";
+
+
+            if (breakArray.length > 11) {
+                for (var i = 1; i < breakArray.length; i++) {
+                    if (newbreakString === "") {
+                        newbreakString = breakArray[i];
+                    } else {
+                        newbreakString = newbreakString + ", " + breakArray[i];
+                    }
+                }
+            } else {
+                newbreakString = breakString;
+            }
+
+            return fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+                },
+                body: JSON.stringify({
+                    "BreakEnd": breakEnd,
+                    "BreakTime": newbreakString
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
         })
         .catch((error) => {
             console.error("Error:", error);
-        });
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    })
+        })
 }

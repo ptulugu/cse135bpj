@@ -30,7 +30,8 @@
     <zing-grid
         caption="Static"
         src="https://cse135bpj.site/api/static"
-        pager >
+        pager 
+        editor editor-controls>
         <zg-colgroup>
             <zg-column index="id" header="User Id"></zg-column>
             <zg-column index="UserAgent" header="User Agent String"></zg-column>
@@ -44,13 +45,16 @@
             <zg-column index="WindowWidth" header="Window Width (px)"></zg-column>
             <zg-column index="WindowHeight" header="Window Height (px)"></zg-column>
             <zg-column index="UserConnectionType" header="User Connection Type"></zg-column>
+            <zg-column index="LoadDateObject" header="Date"></zg-column>
+            <zg-column index="UniqueVisitor" header="Unique Visitor"></zg-column>
         </zg-colgroup>
     </zing-grid>
 
     <zing-grid
         caption="Performance"
         src="https://cse135bpj.site/api/performance"
-        pager >
+        pager
+        editor editor-controls >
         <zg-colgroup>
             <zg-column index="id" header="User Id"></zg-column>
             <zg-column index="TimingObject" header="Timing Object"></zg-column>
@@ -63,7 +67,8 @@
     <zing-grid
         caption="Activity"
         src="https://cse135bpj.site/api/activity"
-        pager >
+        pager
+        editor editor-controls >
         <zg-colgroup>
             <zg-column index="id" header="User Id"></zg-column>
             <zg-column index="CursorXPos" header="Last Cursor X Coord"></zg-column>
@@ -77,9 +82,10 @@
             <zg-column index="KeyDown" header="Key Down"></zg-column>
             <zg-column index="BreakEnd" header="End of Inactivity (ms after midnight)"></zg-column>
             <zg-column index="BreakTime" header="Length of Inactivity (ms)"></zg-column>
-            <zg-column index="UserEnter" header="Time of Enter (ms after midnight)"></zg-column>
-            <zg-column index="UserLeave" header="Time of Exit (ms after midnight)"></zg-column>
+            <zg-column index="UserEnter" header="Time of Enter"></zg-column>
+            <zg-column index="UserLeave" header="Time of Exit"></zg-column>
             <zg-column index="Referrer" header="Previous Page"></zg-column>
+            <zg-column index="Metrics" header="Metrics"></zg-column>
         </zg-colgroup>
     </zing-grid>
 </body>

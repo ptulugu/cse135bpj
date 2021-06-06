@@ -2,10 +2,12 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const bodyParser = require('body-parser');
+var cors = require('cors');
 
 //Use the Express server npm package
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors())
 
 //Connect to the MySql database
 var connection = mysql.createConnection({

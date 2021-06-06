@@ -5,14 +5,361 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home</title>
+  <!-- <script src = 'collector.js' type="module"></script> -->
+
+  <style>
+    .wrapper {
+      display: grid;
+      grid-template-columns: auto auto auto auto;
+      padding: 10px;
+    }
+
+    .wrapper>.gridCell {
+      background: #1E90FF;
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .wrapper>.gridCell:nth-child(odd) {
+      background: #00FFFF;
+    }
+  </style>
 </head>
 
 <body>
   <h1>Home Page</h1>
-  <a href="/authapp/reports">Link to Reports</a>
-  <br>
-  <br>
   <button onclick="document.location='/authapp/logout'">Logout</button>
+
+  <script>
+    fetch('https://cse135bpj.site/api/static')
+      .then(response => response.json())
+      .then(data => {
+
+        var uniqueVisitors = 0;
+        var totalVisitors = data.length;
+
+        for (var i = 0; i < data.length; i++) {
+          if (data[i].UniqueVisitor == 1) {
+            uniqueVisitors += 1;
+          }
+        }
+
+        document.getElementById('UniqueVisitors').innerHTML = uniqueVisitors;
+        document.getElementById('TotalVisitors').innerHTML = totalVisitors;
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    fetch('https://cse135bpj.site/api/activity')
+      .then(response => response.json())
+      .then(data => {
+
+        var numPageViews = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          for (var j = 0; j < JSON.parse(data[i].Metrics).length; j++) {
+            numPageViews += JSON.parse(data[i].Metrics)[j].PageViews;
+          }
+        }
+
+        var avgSessionDuration = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          avgSessionDuration += (data[i].UserLeave - data[i].UserEnter) / 1000
+        }
+
+        d = avgSessionDuration / data.length;
+
+        var h = Math.floor(d / 3600);
+        var m = Math.floor(d % 3600 / 60);
+        var s = Math.floor(d % 3600 % 60);
+
+        var hDisplay = h > 0 ? (h > 9 ? h + ":" : "0" + h + ":") : "00:";
+        var mDisplay = m > 0 ? (m > 9 ? m + ":" : "0" + m + ":") : "00:";
+        var sDisplay = s > 0 ? (s > 9 ? s : "0" + s) : "00";
+
+        document.getElementById('Pageviews').innerHTML = numPageViews;
+        document.getElementById('AvgSessDur').innerHTML = hDisplay + mDisplay + sDisplay;
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  </script>
+
+  <h1 style="text-align:center"> Analytical Data </h1>
+  <h2 style="text-align:center">Grid</h2>
+  <div style="text-align:center">
+    <a href="/authapp/reports">Generate Report</a>
+  </div>
+  <div class="wrapper">
+    <div class="gridCell"><b>Total Users</b> <p id="TotalVisitors"></p> </div>
+    <div class="gridCell"><b>Unique Users</b> <p id="UniqueVisitors"></p> </div>
+    <div class="gridCell"><b>Sessions</b> <br><br> 20 - filler </div>
+    <div class="gridCell"><b>Number of Sessions per User</b> <br><br> 1 - filler </div>
+    <div class="gridCell"><b>Pageviews</b> <p id="Pageviews"></p> </div>
+    <div class="gridCell"><b>Pages / session</b> <br><br> 4 - filler</div>
+    <div class="gridCell"><b>Avg. session duration</b> <p id="AvgSessDur"></p> </div>
+    <div class="gridCell"><b>Bounce Rate</b> <br><br> 20% - filler </div>
+  </div>
+
+
+
+  <h2 style="text-align:center"> Chart 1 </h2>
+  <div id="lineChart"></div>
+  <h2 style="text-align:center"> Chart 2 </h2>
+  <div id="barChart"></div>
+  <h2 style="text-align:center"> Grid </h2>
+  <div id="pieChart"></div>
+
+
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+
+
+  <!-- <?php
+  /* Open connection to "zing_db" MySQL database. */
+  $mysqliData = new mysqli("localhost", "root", "cse135Password", "hw3");
+
+  /* Check the connection. */
+  if (mysqli_connect_errno()) {
+      printf("Connect failed: %s\n", mysqli_connect_error());
+      exit();
+  }
+  /* Fetch result set from t_test table */
+  $pieData = mysqli_query($mysqliData, "SELECT SUM(MouseLeft), SUM(MouseMiddle), SUM(MouseRight) FROM activity");
+  $barData = mysqli_query($mysqliData, "SELECT COUNT(id), SUM(CASE WHEN UserCookie  THEN 1 ELSE 0 END), SUM(CASE WHEN UserJS  THEN 1 ELSE 0 END), 
+  SUM(CASE WHEN UserImages  THEN 1 ELSE 0 END), SUM(CASE WHEN UserCSS  THEN 1 ELSE 0 END) FROM static");
+  $lineData = mysqli_query($mysqliData, "SELECT CursorXPos, CursorYPos, Scrolling from activity");
+?> -->
+
+  <script>
+
+    fetch('https://cse135bpj.site/api/activity')
+      .then(response => response.json())
+      .then(data => {
+
+        var mouseLeft = 0;
+        var mouseMiddle = 0;
+        var mouseRight = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          mouseLeft += data[i].MouseLeft;
+          mouseMiddle += data[i].MouseMiddle;
+          mouseRight += data[i].MouseRight;
+        }
+
+        zingchart.render({
+          id: 'pieChart',
+          data: {
+            "type": "pie3d",
+
+            "plot": {
+              //Use the "slice" attribute to adjust the size of the donut ring.
+            },
+            "series": [{
+              values: [mouseLeft],
+              text: 'Mouse Left Click'
+            },
+            {
+              values: [mouseRight],
+              text: 'Mouse Right Click'
+            },
+            {
+              values: [mouseMiddle],
+              text: 'Mouse Middle Click'
+            },
+            ]
+          }
+
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+// ////  ***********     PARSE BAR CHART DATA     ********/////////////
+// var trues = [];
+// var falses = [];
+// var total =[
+//   "<?php while($info=mysqli_fetch_array($barData)) echo $info[ 'COUNT(id)' ]; ?>"
+//   ];
+//   total = parseInt(total[0]);
+
+// "<?php  $barData = mysqli_query($mysqliData, 'SELECT COUNT(id), SUM(CASE WHEN UserCookie  THEN 1 ELSE 0 END), count(CASE WHEN UserJS  THEN 1 ELSE 0 END), count(CASE WHEN UserImages  THEN 1 ELSE 0 END), count(CASE WHEN UserCSS  THEN 1 ELSE 0 END) FROM static') ?>"
+
+// var cookie =[
+//   "<?php while($info=mysqli_fetch_array($barData)) echo $info[ 'SUM(CASE WHEN UserCookie  THEN 1 ELSE 0 END)' ]; ?>"
+//   ];
+// cookie = parseInt(cookie[0]);
+// trues.push(cookie);
+// falses.push(total - cookie);
+
+// "<?php  $barData = mysqli_query($mysqliData, 'SELECT COUNT(id), SUM(CASE WHEN UserCookie THEN 1 ELSE 0 END), SUM(CASE WHEN UserJS THEN 1 ELSE 0 END), SUM(CASE WHEN UserImages THEN 1 ELSE 0 END), SUM(CASE WHEN UserCSS THEN 1 ELSE 0 END) FROM static') ?>"
+
+// var js =[
+//   "<?php while($info=mysqli_fetch_array($barData)) echo $info[ 'SUM(CASE WHEN UserJS THEN 1 ELSE 0 END)' ]; ?>"
+//   ];
+// js = parseInt(js[0]);
+// trues.push(js);
+// falses.push(total - js);
+
+// "<?php  $barData = mysqli_query($mysqliData, 'SELECT COUNT(id), SUM(CASE WHEN UserCookie THEN 1 ELSE 0 END), SUM(CASE WHEN UserJS THEN 1 ELSE 0 END), SUM(CASE WHEN UserImages THEN 1 ELSE 0 END), SUM(CASE WHEN UserCSS THEN 1 ELSE 0 END) FROM static') ?>"
+
+// var images =[
+//   "<?php while($info=mysqli_fetch_array($barData)) echo $info[ 'SUM(CASE WHEN UserImages THEN 1 ELSE 0 END)' ]; ?>"
+//   ];
+// images = parseInt(images[0]);
+// trues.push(images);
+// falses.push(total - images);
+
+// "<?php  $barData = mysqli_query($mysqliData, 'SELECT COUNT(id), SUM(CASE WHEN UserCookie THEN 1 ELSE 0 END), SUM(CASE WHEN UserJS THEN 1 ELSE 0 END), SUM(CASE WHEN UserImages THEN 1 ELSE 0 END), SUM(CASE WHEN UserCSS THEN 1 ELSE 0 END) FROM static') ?>"
+
+// var css =[
+//   "<?php while($info=mysqli_fetch_array($barData)) echo $info[ 'SUM(CASE WHEN UserImages THEN 1 ELSE 0 END)' ]; ?>"
+//   ];
+// css = parseInt(css[0]);
+// trues.push(css);
+// falses.push(total - css);
+
+// ////// *************     PARSE LINE CHART DATA       ***********  /////////////////
+// var xPos = [
+//   "<?php while($info=mysqli_fetch_array($lineData)) echo $info[ 'CursorXPos' ].' '; ?>"
+//   ];
+// xPos = xPos[0]
+// xPos = xPos.split(" ")
+// xPos.length = xPos.length - 1;
+// xPos = xPos.map(Number);
+
+// "<?php $lineData = mysqli_query($mysqliData, 'SELECT CursorXPos, CursorYPos, Scrolling from activity'); ?>"
+
+// var yPos = [
+//   "<?php while($info=mysqli_fetch_array($lineData)) echo $info[ 'CursorYPos' ].' '; ?>"
+//   ];
+// yPos = yPos[0]
+// yPos = yPos.split(" ")
+// yPos.length = yPos.length - 1;
+// yPos = yPos.map(Number);
+
+// "<?php $lineData = mysqli_query($mysqliData, 'SELECT CursorXPos, CursorYPos, Scrolling from activity'); ?>"
+
+// var scroll = [
+//   "<?php while($info=mysqli_fetch_array($lineData)) echo $info[ 'Scrolling' ].' '; ?>"
+//   ];
+// scroll = scroll[0]
+// scroll = scroll.split(" ")
+// scroll.length = scroll.length - 1;
+// scroll = scroll.map(Number);
+
+// ////// ************ RENDERING ******////////
+
+// //Bar Chart
+
+// zingchart.render({
+//   id: 'barChart',
+//   data: {
+//   type: "bar",
+
+
+
+//   "scaleX": {
+//           "values": [
+//             "User Cookies",
+//             "User JS",
+//             "User Images",
+//             "User CSS"
+//           ]},
+
+
+//         "legend": {
+//           "layout": "x3",
+//           "overflow": "page",
+//           "alpha": 0.05,
+//           "shadow": false,
+//           "align": "center",
+//           "adjust-layout": true,
+//           "marker": {
+//             "type": "circle",
+//             "border-color": "none",
+//             "size": "10px"
+//           },
+//           "border-width": 0,
+//           "maxItems": 3,
+//           "toggle-action": "hide",
+//           "pageOn": {
+//             "backgroundColor": "#000",
+//             "size": "10px",
+//             "alpha": 0.65
+//           },
+//           "pageOff": {
+//             "backgroundColor": "#7E7E7E",
+//             "size": "10px",
+//             "alpha": 0.65
+//           },
+//           "pageStatus": {
+//             "color": "black"
+//           }
+//         },
+//   series: [{
+//       values: trues,
+//       text: "True",
+//     },
+//     {
+//       values: falses,
+//       text: "False",
+
+//     },
+//   ]
+
+//   }
+// });
+
+// zingchart.render({
+//     id: 'lineChart',
+//     data: {
+//       type: 'line',
+// 	            "legend": {
+//           "layout": "x3",
+//           "overflow": "page",
+//           "alpha": 0.05,
+//           "shadow": false,
+//           "align": "center",
+//           "adjust-layout": true,
+//           "marker": {
+//             "type": "circle",
+//             "border-color": "none",
+//             "size": "10px"
+//           },
+//           "border-width": 0,
+//           "maxItems": 3,
+//           "toggle-action": "hide",
+//           "pageOn": {
+//             "backgroundColor": "#000",
+//             "size": "10px",
+//             "alpha": 0.65
+//           },
+//           "pageOff": {
+//             "backgroundColor": "#7E7E7E",
+//             "size": "10px",
+//             "alpha": 0.65
+//           },
+//           "pageStatus": {
+//             "color": "black"
+//           }
+//         },
+//       series: [
+//         { values: xPos,
+// 	text: "Cursor X Coor"},
+//         { values: yPos,
+// 	text: "Cursor Y Coor"},
+//         { values: scroll,
+// 	text: "Scroll Offset"}
+//       ]
+//     }
+//   });
+
+  </script>
 
 </body>
 
