@@ -33,26 +33,6 @@
   <button onclick="document.location='/authapp/logout'">Logout</button>
 
   <script>
-    fetch('https://cse135bpj.site/api/static')
-      .then(response => response.json())
-      .then(data => {
-
-        var uniqueVisitors = 0;
-        var totalVisitors = data.length;
-
-        for (var i = 0; i < data.length; i++) {
-          if (data[i].UniqueVisitor == 1) {
-            uniqueVisitors += 1;
-          }
-        }
-
-        document.getElementById('UniqueVisitors').innerHTML = uniqueVisitors;
-        document.getElementById('TotalVisitors').innerHTML = totalVisitors;
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-
     fetch('https://cse135bpj.site/api/activity')
       .then(response => response.json())
       .then(data => {
@@ -68,7 +48,9 @@
         var avgSessionDuration = 0;
 
         for (var i = 0; i < data.length; i++) {
-          avgSessionDuration += (data[i].UserLeave - data[i].UserEnter) / 1000
+          if(data[i].UserLeave != "" && data[i].UserEnter != "" ) {
+            avgSessionDuration += (data[i].UserLeave - data[i].UserEnter) / 1000;
+          }
         }
 
         d = avgSessionDuration / data.length;
@@ -81,8 +63,47 @@
         var mDisplay = m > 0 ? (m > 9 ? m + ":" : "0" + m + ":") : "00:";
         var sDisplay = s > 0 ? (s > 9 ? s : "0" + s) : "00";
 
+        var sessions = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          sessions += data[i].Sessions;
+        }
+
+
+        var bounced = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          if (data[i].Sessions === 1) {
+            bounced += 1;
+          }
+        }
+
+        fetch('https://cse135bpj.site/api/static')
+        .then(response => response.json())
+        .then(data => {
+
+          var uniqueVisitors = 0;
+          var totalVisitors = data.length;
+
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].UniqueVisitor == 1) {
+              uniqueVisitors += 1;
+            }
+          }
+
+          document.getElementById('UniqueVisitors').innerHTML = uniqueVisitors;
+          document.getElementById('TotalVisitors').innerHTML = totalVisitors;
+          document.getElementById('SessionsPerUser').innerHTML = sessions / totalVisitors;
+          document.getElementById('BounceRate').innerHTML = ((bounced / totalVisitors) * 100) + "%";
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+
         document.getElementById('Pageviews').innerHTML = numPageViews;
         document.getElementById('AvgSessDur').innerHTML = hDisplay + mDisplay + sDisplay;
+        document.getElementById('NumSessions').innerHTML = sessions;
+        document.getElementById('PagesPerSession').innerHTML = numPageViews / sessions;
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -97,12 +118,12 @@
   <div class="wrapper">
     <div class="gridCell"><b>Total Users</b> <p id="TotalVisitors"></p> </div>
     <div class="gridCell"><b>Unique Users</b> <p id="UniqueVisitors"></p> </div>
-    <div class="gridCell"><b>Sessions</b> <br><br> 20 - filler </div>
-    <div class="gridCell"><b>Number of Sessions per User</b> <br><br> 1 - filler </div>
+    <div class="gridCell"><b>Sessions</b> <p id="NumSessions"></p> </div>
+    <div class="gridCell"><b>Number of Sessions per User</b> <p id="SessionsPerUser"></p> </div>
     <div class="gridCell"><b>Pageviews</b> <p id="Pageviews"></p> </div>
-    <div class="gridCell"><b>Pages / session</b> <br><br> 4 - filler</div>
+    <div class="gridCell"><b>Pages / session</b> <p id="PagesPerSession"></p></div>
     <div class="gridCell"><b>Avg. session duration</b> <p id="AvgSessDur"></p> </div>
-    <div class="gridCell"><b>Bounce Rate</b> <br><br> 20% - filler </div>
+    <div class="gridCell"><b>Bounce Rate</b> <p id="BounceRate"></p> </div>
   </div>
 
 

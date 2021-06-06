@@ -28,6 +28,7 @@ window.addEventListener('DOMContentLoaded', function () {
             } else {
                 putAnalytics();
                 putReferrer();
+                putSession();
             }
         })
         .catch((error) => {
@@ -89,7 +90,6 @@ function putAnalytics() {
                     });
 
             } else {
-                console.log('else')
                 let id = metrics[metrics.length - 1].id;
                 let inactivity = metrics[metrics.length - 1].AvgInactivity;
                 id += 1;
@@ -363,7 +363,8 @@ function loadActivity() {
         "UserEnter": JSON.stringify(beginTime),
         "UserLeave": "",
         "Referrer": "",
-        "Metrics": JSON.stringify(metrics)
+        "Metrics": JSON.stringify(metrics),
+        "Sessions": 0
     };
 
     fetch('https://cse135bpj.site/api/activity', {
@@ -381,6 +382,8 @@ function loadActivity() {
         .catch((error) => {
             console.error("Error:", error);
         });
+
+        putSession();
 }
 
 /*
@@ -550,7 +553,7 @@ function putKeyDown(keyDown) {
             let newKeyDownString = "";
 
             if (keyDownArray.length > 10) {
-                for (i = 1; i < keyDownArray.length; i++) {
+                for (var i = 1; i < keyDownArray.length; i++) {
                     if (newKeyDownString === "") {
                         newKeyDownString = keyDownArray[i];
                     } else {
@@ -607,7 +610,7 @@ function putKeyUp(keyUp) {
             let newKeyUpString = "";
 
             if (keyUpArray.length > 10) {
-                for (i = 1; i < keyUpArray.length; i++) {
+                for (var i = 1; i < keyUpArray.length; i++) {
                     if (newKeyUpString === "") {
                         newKeyUpString = keyUpArray[i];
                     } else {
@@ -674,11 +677,17 @@ function putEndTime(endTime) {
 */
 
 var timeoutId;
+var sessionTimeout;
 var breakStart;
 var breakEnd;
 
 function startTimer() {
     timeoutId = window.setTimeout(doInactive, 2000);
+    sessionTimeout = window.setTimeout(sessionInactive, 300000) // New session every five minutes of inactivity
+}
+
+function sessionInactive() {
+    putSession();
 }
 
 function doInactive() {
@@ -759,6 +768,37 @@ function putBreaks(breakTime, breakEnd) {
                 body: JSON.stringify({
                     "BreakEnd": breakEnd,
                     "BreakTime": newbreakString
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Success:", data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                });
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        })
+}
+
+function putSession() {
+
+    fetch('https://cse135bpj.site/api/activity/' + cookieValue)
+        .then(response => response.json())
+        .then(data => {
+            var sessions = data[0].Sessions;
+            sessions = sessions + 1;
+
+            fetch('https://cse135bpj.site/api/activity/' + cookieValue, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Basic ' + btoa('grader' + ":" + 'cse135Password')
+                },
+                body: JSON.stringify({
+                    "Sessions": sessions
                 })
             })
                 .then(response => response.json())
