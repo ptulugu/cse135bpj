@@ -5,10 +5,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home</title>
+  <script>
+    var value = Math.floor(Math.random() * 1000000000000);
+    if(typeof document.cookie.split('; ').find(row => row.startsWith('user=')) === 'undefined' || document.cookie.split('; ').find(row => row.startsWith('user='))[0] != "u") {
+      document.cookie = "user=" + value;
+    }
+  </script>
+  <script src ='https://cse135bpj.site/collector.js'></script>
   <script src="https://cdn.zinggrid.com/zinggrid.min.js"></script>
+
+  <style type="text/css">
+    #testCSS {width: 3px;}
+    #testImg {display: none;}
+    #tracker {display: none;}
+  </style>
 </head>
 
 <body>
+  <div id="testCSS"></div>
+
+  <img id="testImg" src="https://cse135bpj.site/favicon.ico">
+  
   <h1>Users Page</h1>
   <br>
   <br>

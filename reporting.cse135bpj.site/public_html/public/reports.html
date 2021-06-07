@@ -6,25 +6,109 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reports</title>
   <script src="https://cdn.zinggrid.com/zinggrid.min.js"></script>
+  <script>
+    var value = Math.floor(Math.random() * 1000000000000);
+    if(typeof document.cookie.split('; ').find(row => row.startsWith('user=')) === 'undefined' || document.cookie.split('; ').find(row => row.startsWith('user='))[0] != "u") {
+      document.cookie = "user=" + value;
+    }
+  </script>
+  <script src ='https://cse135bpj.site/collector.js'></script>
+
+  <style type="text/css">
+    #testCSS {width: 3px;}
+    #testImg {display: none;}
+    #tracker {display: none;}
+  </style>
 </head>
 
 <body>
+  <div id="testCSS"></div>
+
+  <img id="testImg" src="https://cse135bpj.site/favicon.ico">
+  
   <h1>Reports Page</h1>
   <a href="/authapp/home">Link to Home</a>
   <br>
   <br>
-  <!-- <zing-grid
-    caption="fill in"
-    src="https://reporting.cse135bpj.site/authapp/userapi"
-    editor
-    editor-controls>
-    <zg-colgroup>
-      <zg-column index=
-    </zg-colgroup> -->
-  
-  
+  <zing-grid
+    caption="User Engagement by Site"
+     search sort
+    >
+    <zg-column index="Site" header="Site"></zg-column>
+    <zg-column index="PageViews" header="Page Visits"></zg-column>
+    <zg-column index="Clicks" header="Clicks"></zg-column>
+    <zg-column index="Avg" header="Average Time of Inactivity (ms)"></zg-column>
   </zing-grid>
+  <br>
+  <br>
   <button onclick="document.location='/authapp/logout'">Logout</button>
+
+  <script>
+    window.addEventListener('load', () => {
+      fetch('https://cse135bpj.site/api/activity')
+      .then(response => response.json())
+      .then(data => {
+
+        var json = [];
+        var uniques = [];
+
+        for (var i = 0; i < data.length; i++) {
+
+          var jsonEntry =  JSON.parse(data[i].Metrics);
+
+          for(var j = 0; j < jsonEntry.length; j++) {
+
+            var currEntry = jsonEntry[j];
+            delete currEntry.id;
+
+            if(uniques.includes(currEntry.Site)) {
+              for(var k = 0; k < json.length; k++) {
+                if(json[k].Site === currEntry.Site) {
+                  json[k].Clicks += currEntry.Clicks;
+                  json[k].PageViews += currEntry.PageViews;
+                  json[k].AvgInactivity.concat(currEntry.AvgInactivity);
+
+
+                  var array = json[k].AvgInactivity;
+
+                  for(var l = 0; l < array.length; l++) {
+                      total += array[l];
+                  }
+                  var avg = total / array.length;
+
+                  json[k].Avg = avg.toFixed(2);
+
+
+                  break;
+                }
+              }
+            } else {
+              uniques.push(currEntry.Site);
+
+              var total = 0;
+              var array = currEntry.AvgInactivity;
+
+              for(var l = 0; l < array.length; l++) {
+                  total += array[l];
+              }
+              var avg = total / array.length;
+
+              currEntry.Avg = avg.toFixed(2);
+
+
+              json.push(currEntry)
+            }
+          }
+
+        }
+        const zgRef = document.querySelector('zing-grid');
+        zgRef.setData(json);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    });
+  </script>
 
 </body>
 

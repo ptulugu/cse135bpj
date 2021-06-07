@@ -7,6 +7,7 @@ const port    = 3003;
 const passport      = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require('bcryptjs');
+var cors = require('cors');
 
 var isAdmin = false;
 
@@ -69,6 +70,11 @@ app.use(express.json());
 app.use(session({ secret: 'nyan cat', resave: false, saveUninitialized: false }));
 app.use(body.urlencoded({ extended: true }));
 app.use(body.json());
+app.use(cors());
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
 app.use(passport.initialize());
 app.use(passport.session());
 
