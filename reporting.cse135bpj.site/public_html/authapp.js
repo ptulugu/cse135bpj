@@ -83,10 +83,6 @@ function ensureAuthenticated(req, res, next) {
     res.redirect('login');
 }
 
-app.get('/dbConnect.php', function(req, res) {
-    res.sendFile('dbConnect.php', { root: __dirname });
-})
-
 app.get('/', function(req, res) {
     res.sendFile('public/login.html', { root: __dirname });
 })
@@ -113,8 +109,12 @@ app.get('/home', ensureAuthenticated, function(req, res) {
     }
 });
 
-app.get('/reports', ensureAuthenticated, function(req, res) {
-    res.sendFile('public/reports.html', { root: __dirname });
+app.get('/websiteMetrics', ensureAuthenticated, function(req, res) {
+    res.sendFile('public/websiteMetrics.html', { root: __dirname });
+});
+
+app.get('/osloadtimes', ensureAuthenticated, function(req, res) {
+    res.sendFile('public/osloadtimes.html', { root: __dirname });
 });
 
 app.get("/users", ensureAuthenticated, function (req, res) {

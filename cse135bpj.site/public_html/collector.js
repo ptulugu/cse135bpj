@@ -27,6 +27,28 @@ window.addEventListener('DOMContentLoaded', function () {
                 putAnalytics();
                 putReferrer();
                 putSession();
+                var currDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles", timeZoneName: "short" });
+                var currDay = currDate.split(',')[0].split('/')[1];
+                var currMonth = currDate.split(',')[0].split('/')[0];
+                var currYear = currDate.split(',')[0].split('/')[2];
+            
+                fetch('https://cse135bpj.site/api/static/')
+                .then(response => response.json())
+                .then(data => {
+                    var max = 0;
+                    data.forEach(obj => {
+                        let checkDate = obj[Object.keys(obj)[12]].split(',')[0].split('/')[1];
+                        if (checkDate > max) {
+                            max = checkDate;
+                        }
+                    })
+
+                    if (currDay > max) {
+                        data.forEach(obj => {
+                            resetUniqueVisitors(obj[Object.keys(obj)[0]]);
+                        })
+                    }
+                })
             }
         })
         .catch((error) => {
@@ -224,7 +246,28 @@ function loadStatic() {
         enabledImg = false;
     }
 
-    var loadDate = new Date();
+    var currDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles", timeZoneName: "short" });
+    var currDay = currDate.split(',')[0].split('/')[1];
+    var currMonth = currDate.split(',')[0].split('/')[0];
+    var currYear = currDate.split(',')[0].split('/')[2];
+
+    fetch('https://cse135bpj.site/api/static/')
+    .then(response => response.json())
+    .then(data => {
+        var max = 0;
+        data.forEach(obj => {
+            let checkDate = obj[Object.keys(obj)[12]].split(',')[0].split('/')[1];
+            if (checkDate > max) {
+                max = checkDate;
+            }
+        })
+
+        if (currDay > max) {
+            data.forEach(obj => {
+                resetUniqueVisitors(obj[Object.keys(obj)[0]]);
+            })
+        }
+    })
 
     var data = {
         "id": cookieValue,
@@ -239,7 +282,7 @@ function loadStatic() {
         "WindowWidth": window.innerWidth,
         "WindowHeight": window.innerHeight,
         "UserConnectionType": navigator.connection.effectiveType,
-        "LoadDateObject": JSON.stringify(loadDate),
+        "LoadDateObject": JSON.stringify(currDate),
         "UniqueVisitor": 1
     };
 
@@ -259,11 +302,6 @@ function loadStatic() {
             console.error("Error:", error);
         });
 
-    var currDate = new Date().toLocaleString("en-US", { timeZone: "America/Los_Angeles", timeZoneName: "short" });
-    var currDay = currDate.split(',')[0].split('/')[1];
-    var currMonth = currDate.split(',')[0].split('/')[0];
-    var currYear = currDate.split(',')[0].split('/')[2];
-
     fetch('https://cse135bpj.site/api/static/')
         .then(response => response.json())
         .then(data => {
@@ -274,7 +312,8 @@ function loadStatic() {
                     max = checkDate;
                 }
             })
-            if (max > currDay) {
+            console.log(currDay, max)
+            if (currDay > max) {
                 data.forEach(obj => {
                     resetUniqueVisitors(obj[Object.keys(obj)[0]]);
                 })

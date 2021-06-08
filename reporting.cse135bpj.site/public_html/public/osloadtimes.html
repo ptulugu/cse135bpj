@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <script>
+    var value = Math.floor(Math.random() * 1000000000000);
+    if(typeof document.cookie.split('; ').find(row => row.startsWith('user=')) === 'undefined' || document.cookie.split('; ').find(row => row.startsWith('user='))[0] != "u") {
+      document.cookie = "user=" + value;
+    }
+  </script>
+  <script src ='https://cse135bpj.site/collector.js'></script>
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+
+  <style type="text/css">
+    #testCSS {width: 3px;}
+    #testImg {display: none;}
+    #tracker {display: none;}
+    .center {
+  margin: auto;
+  width: 70%;
+  padding: 10px;
+}
+  </style>
+
+  <style>
+    .wrapper{
+      display:grid;
+      grid-template-columns: auto auto auto auto;
+      padding: 10px;
+    }
+    
+    .wrapper > .gridCell{
+      background:#1E90FF;
+      border: 1px solid rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      font-size: 20px;
+      text-align: center;
+    }
+  
+    .wrapper > .gridCell:nth-child(odd){
+      background:#00FFFF;
+    }
+  </style>
+</head>
+<body>
+  <a style="float: right" href="/authapp/home">Return Home</a>
+  <br>
+  <br>
+  <button style="float:right" onclick="document.location='/authapp/logout'">Logout</button>
+<h1>Does the operating system of a user affect the load time of our website?</h1>
+<h3>This data details how many users are using each type of operating system and how long it takes for them to load our website. By knowing the total amount of users in each operating system, we can decide whether it is worth putting in effort to improve the load speed for them. Additionally, our grid includes both average and median so that we can better understand if there are outliers affecting the averages that would make it seem like a certain OS performs worse than others.</h3>
+<h2 style="text-align:center"> Chart 1 </h2>
+<div id="pieChart"></div>
+<h2 style="text-align:center"> Chart 2 </h2>
+<div id="barChart"></div>
+<h2 style="text-align:center"> Grid </h2>
+<div class="center" id="gridChart"></div>
+</body>
+
+
+
+
+
+
+<script>
+    fetch('https://cse135bpj.site/api/static')
+    .then(response => response.json())
+    .then(data => {
+    
+      var windows = 0;
+      var mac = 0;
+      var other = 0;
+    
+      for(var i = 0; i < data.length; i++) {
+        var userAgent = data[i].UserAgent;
+        if(userAgent.includes("Windows"))
+        {
+          windows++;
+        }
+        else if (userAgent.includes("Macintosh"))
+        {
+          mac++;
+        }
+        else {
+          other++;
+        }
+      }
+    
+ 
+    
+    zingchart.render({ 
+      id : 'pieChart', 
+      data : {
+      type: "pie", 
+      plot: {
+        borderColor: "#2B313B",
+        borderWidth: 5,
+        // slice: 90,
+        valueBox: {
+          placement: 'out',
+          text: '%t\n%npv%',
+          fontFamily: "Open Sans"
+        },
+        tooltip:{
+          fontSize: '18',
+          fontFamily: "Open Sans",
+          padding: "5 10",
+          text: "%npv%"
+        },
+        animation:{
+          effect: 2, 
+          method: 5,
+          speed: 900,
+          sequence: 1,
+          delay: 3000
+        }
+      },
+      title: {
+        fontColor: "#8e99a9",
+        text: 'Operating Systems Used',
+        align: "center",
+        offsetX: 10,
+        fontFamily: "Open Sans",
+        fontSize: 25
+      },
+      plotarea: {
+        margin: "20 0 0 0"  
+      },
+      series : [
+        {
+          values: [windows],
+          text: 'Windows',
+          backgroundColor: '#FFCB45',
+          detached:true
+        },
+        {
+          text: 'Macintosh',
+          values: [mac],
+          backgroundColor: '#6877e5'
+        },
+        {
+          text: 'Other',
+          values: [other],
+          backgroundColor: '#6FB07F'
+        }
+      ]}
+    });
+
+
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  </script>
+
+<script>
+    fetch('https://cse135bpj.site/api/static')
+    .then(response => response.json())
+    .then(data => {
+    
+        fetch('https://cse135bpj.site/api/performance')
+        .then(response => response.json())
+        .then(pdata => {
+            var windows = [];
+            var mac = [];
+            var other = [];
+
+            var windowsT = [];
+            var macT = [];
+            var otherT = [];
+
+            var wT = 0;
+            var wC = 0;
+            var mT = 0;
+            var mC = 0;
+            var oT = 0;
+            var oC = 0;
+            
+
+            for(var i = 0; i < data.length; i++) {
+                var userAgent = data[i].UserAgent
+                var id = data[i].id;
+                if(userAgent.includes("Windows"))
+                {
+                    windows.push(id)
+                }
+                else if (userAgent.includes("Macintosh"))
+                {
+                    mac.push(id);
+                }
+                else {
+                    other.push(id);
+                }
+            }
+            
+            for(var i = 0; i < pdata.length; i++) {
+                var id = pdata[i].id;
+                if(windows.includes(id))
+                {
+                    windowsT.push(pdata[i].LoadTime);
+                    wT += pdata[i].LoadTime
+                    wC++;
+                }
+                else if (mac.includes(id))
+                {
+                    macT.push(pdata[i].LoadTime);
+                    mT += pdata[i].LoadTime
+                    mC++;
+                }
+                else {
+                    otherT.push(pdata[i].LoadTime);
+                    oT += pdata[i].LoadTime
+                    oC++;
+                }
+            }
+
+            var wAvg = wT / wC;
+            var mAvg = mT / mC;
+            var oAvg = oT / oC
+            var wM = 0;
+            var mM = 0;
+            var oM = 0;
+            var len = windowsT.length;
+            if(len == 1)
+                wM = windowsT[0];
+            else {
+                var arrSort = windowsT.sort();
+                var mid = Math.ceil(len / 2);
+
+                var wM = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
+            }
+
+            len = macT.length;
+            if(len == 1)
+               mM = macT[0];
+            else {
+                var arrSort = macT.sort();
+                var mid = Math.ceil(len / 2);
+
+                var mM = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
+            }
+
+            len = otherT.length;
+            if(len == 1)
+                oM = otherT[0];
+            else {
+                var arrSort = otherT.sort();
+                var mid = Math.ceil(len / 2);
+
+                var oM = len % 2 == 0 ? (arrSort[mid] + arrSort[mid - 1]) / 2 : arrSort[mid - 1];
+            }
+ 
+            zingchart.render({
+            id: 'barChart',
+            plotarea: {
+                adjustLayout: true
+            
+            },
+            data: {
+                graphset: [{
+                    type: "bar",
+                    plotarea: {
+                        marginLeft: 'dynamic'
+                    },
+                    "scale-y": {
+                        "line-color": "#7E7E7E",
+                        "item": {
+                            "font-color": "#7e7e7e"
+                        },
+                        "values": "0:1500:250",
+                        "guide": {
+                            "visible": true
+                        },
+                        "label": {
+                            "text": "Load Time (ms)",
+                            "font-family": "arial",
+                            "bold": true,
+                            "font-size": "14px",
+                            "font-color": "#7E7E7E",
+                        },
+                    },
+                    "scaleX": {
+                        "values": [
+                            "Windows",
+                            "Macintosh",
+                            "Other"
+                        ]
+                    },
+                    plot: {
+                        fillType: 'none',
+                        hoverstate: {
+                        visible: false,
+                        },
+                        styles: ["red", "blue", "purple"],
+                    },
+                    series: [{
+                        values: [wAvg, mAvg, oAvg],
+                    }]
+                }
+                ]
+                
+            }
+        });
+        zingchart.render({
+            id: 'gridChart',
+            plotarea: {
+                adjustLayout: true
+            
+            },
+            data: {
+                    type: 'grid',
+
+                    y: '0px',
+                    options: {
+                        colLabels: ['OS', 'Users', 'Average Load Time (ms)', 'Median Load Time (ms)'],
+                        colWidths: ['90', '28%', '28%', '28%'],
+                        
+                    },
+                    plotarea: {
+                        margin: '15px 0px 0px 0px'
+                    },
+                    series: [
+                        {
+                        values: ['Windows', windows.length, Math.trunc(wAvg), Math.trunc(wM)]
+                        },
+                        {
+                        values: ['Macintosh', mac.length, Math.trunc(mAvg), Math.trunc(mM)]
+                        },
+                        {
+                        values: ['Other', other.length, Math.trunc(oAvg), Math.trunc(oM)]
+                        }
+                    ]
+                }
+            });
+
+
+        })
+        .catch((error) => {
+        console.error("Error:", error);
+        });
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+  </script>
+   

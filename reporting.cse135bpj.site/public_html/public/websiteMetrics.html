@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Website Metrics</title>
+  <script src="https://cdn.zinggrid.com/zinggrid.min.js"></script>
+  <script src="https://cdn.zingchart.com/zingchart.min.js"></script>
+  <script>
+    var value = Math.floor(Math.random() * 1000000000000);
+    if(typeof document.cookie.split('; ').find(row => row.startsWith('user=')) === 'undefined' || document.cookie.split('; ').find(row => row.startsWith('user='))[0] != "u") {
+      document.cookie = "user=" + value;
+    }
+  </script>
+  <script src ='https://cse135bpj.site/collector.js'></script>
+
+  <style type="text/css">
+    #testCSS {width: 3px;}
+    #testImg {display: none;}
+    #tracker {display: none;}
+  </style>
+
+<style>
+  .wrapper{
+    display:grid;
+    grid-template-columns: auto auto auto auto;
+    padding: 10px;
+  }
+  
+  .wrapper > .gridCell{
+    background:#1E90FF;
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .wrapper > .gridCell:nth-child(odd){
+    background:#00FFFF;
+  }
+</style>
+</head>
+
+<body>
+  <div id="testCSS"></div>
+
+  <img id="testImg" src="https://cse135bpj.site/favicon.ico">
+  
+  <a style="float: right" href="/authapp/home">Return Home</a>
+  <br>
+  <br>
+  <button style="float:right" onclick="document.location='/authapp/logout'">Logout</button>
+  <h1>Are Visitors Actively Using the Website?</h1>
+  <p>We wanted to see if users who viewed our website were actively engaging with the website
+    by clicking, scrolling, typing, etc., or if they spent a lot of time on one page inactive.
+    In some cases, being inactive is good as opposed to leaving right away, but being too inactive
+    means that the page they are on is not as easy to look at. We can use the data in the line
+    graph to determine how long the total average time a user spends on a page. Right now, the
+    average inactivity time is around 1 minute, which is a good amount of inactive time to spend
+    on pages. We also wanted to determine how much users are engaging with the website. For each
+    website, we keep track of how many times it is visited, the number of clicks, and average time
+    of inactivity on the site. Filtering the grid for page visits, the most viewed pages are the
+    login page for reports, and the home page for reports. This shows that most of the traffic
+    on our site is to view the analytic reports. Filtering by clicks, the database, the home page
+    for reports, and the login page for reports are the most clicked, which makes sense because
+    there are many links to view reports. Filtering by average time of inactivity (ignoring the
+    outliers), the most inactivity occurs on the main homepage. We can improve on this by making
+    the home page more interactive. After analyzing the data and metrics, we concluded that users
+    are actively using our website due to the low average inactivity, the high number of page views
+    and clicks, and low bounce rate.
+  </p>
+  <br>
+  <br>
+  <div style="text-align:center"><h2>Website Metrics</h2></div>
+  <div class="wrapper">
+    <div class="gridCell"><b>Total Users</b> <p id="TotalVisitors"></p> </div>
+    <div class="gridCell"><b>Unique Users Today</b> <p id="UniqueVisitors"></p> </div>
+    <div class="gridCell"><b>Sessions</b> <p id="NumSessions"></p> </div>
+    <div class="gridCell"><b>Number of Sessions per User</b> <p id="SessionsPerUser"></p> </div>
+    <div class="gridCell"><b>Pageviews</b> <p id="Pageviews"></p> </div>
+    <div class="gridCell"><b>Pages / session</b> <p id="PagesPerSession"></p></div>
+    <div class="gridCell"><b>Avg. session duration</b> <p id="AvgSessDur"></p> </div>
+    <div class="gridCell"><b>Bounce Rate</b> <p id="BounceRate"></p> </div>
+  </div>
+  <br>
+  <br>
+  <div id='myChart'></div>
+  <br>
+  <br>
+  <zing-grid
+    caption="User Engagement by Site"
+     search sort
+    >
+    <zg-column index="Site" header="Site"></zg-column>
+    <zg-column index="PageViews" header="Page Visits"></zg-column>
+    <zg-column index="Clicks" header="Clicks"></zg-column>
+    <zg-column index="Avg" header="Average Time of Inactivity (sec)"></zg-column>
+  </zing-grid>
+
+    <script>
+    fetch('https://cse135bpj.site/api/activity')
+      .then(response => response.json())
+      .then(data => {
+
+        var numPageViews = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          for (var j = 0; j < JSON.parse(data[i].Metrics).length; j++) {
+            numPageViews += JSON.parse(data[i].Metrics)[j].PageViews;
+          }
+        }
+
+        var avgSessionDuration = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          if(data[i].UserLeave != "" && data[i].UserEnter != "" ) {
+            avgSessionDuration += (data[i].UserLeave - data[i].UserEnter) / 1000;
+          }
+        }
+
+        d = avgSessionDuration / data.length;
+
+        var h = Math.floor(d / 3600);
+        var m = Math.floor(d % 3600 / 60);
+        var s = Math.floor(d % 3600 % 60);
+
+        var hDisplay = h > 0 ? (h > 9 ? h + ":" : "0" + h + ":") : "00:";
+        var mDisplay = m > 0 ? (m > 9 ? m + ":" : "0" + m + ":") : "00:";
+        var sDisplay = s > 0 ? (s > 9 ? s : "0" + s) : "00";
+
+        var sessions = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          sessions += data[i].Sessions;
+        }
+
+
+        var bounced = 0;
+
+        for (var i = 0; i < data.length; i++) {
+          if (data[i].Sessions === 1) {
+            bounced += 1;
+          }
+        }
+
+        fetch('https://cse135bpj.site/api/static')
+        .then(response => response.json())
+        .then(data => {
+
+          var uniqueVisitors = 0;
+          var totalVisitors = data.length;
+
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].UniqueVisitor == 1) {
+              uniqueVisitors += 1;
+            }
+          }
+
+          document.getElementById('UniqueVisitors').innerHTML = uniqueVisitors;
+          document.getElementById('TotalVisitors').innerHTML = totalVisitors;
+          document.getElementById('SessionsPerUser').innerHTML = (sessions / totalVisitors).toFixed(2);
+          document.getElementById('BounceRate').innerHTML = ((bounced / totalVisitors) * 100).toFixed(2) + "%";
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+
+        document.getElementById('Pageviews').innerHTML = numPageViews;
+        document.getElementById('AvgSessDur').innerHTML = hDisplay + mDisplay + sDisplay;
+        document.getElementById('NumSessions').innerHTML = sessions;
+        document.getElementById('PagesPerSession').innerHTML = (numPageViews / sessions).toFixed(2);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    </script>
+
+  <script>
+    window.addEventListener('load', () => {
+      fetch('https://cse135bpj.site/api/activity')
+      .then(response => response.json())
+      .then(data => {
+
+        var json = [];
+        var uniques = [];
+
+        for (var i = 0; i < data.length; i++) {
+
+          var jsonEntry =  JSON.parse(data[i].Metrics);
+
+          for(var j = 0; j < jsonEntry.length; j++) {
+
+            var currEntry = jsonEntry[j];
+            delete currEntry.id;
+
+            if(uniques.includes(currEntry.Site)) {
+              for(var k = 0; k < json.length; k++) {
+                if(json[k].Site === currEntry.Site) {
+                  json[k].Clicks += currEntry.Clicks;
+                  json[k].PageViews += currEntry.PageViews;
+                  json[k].AvgInactivity.concat(currEntry.AvgInactivity);
+
+
+                  var array = json[k].AvgInactivity;
+
+                  for(var l = 0; l < array.length; l++) {
+                      total += array[l];
+                  }
+                  var avg = total / array.length;
+
+                  json[k].Avg = (avg / 1000).toFixed(2);
+
+
+                  break;
+                }
+              }
+            } else {
+              uniques.push(currEntry.Site);
+
+              var total = 0;
+              var array = currEntry.AvgInactivity;
+
+              for(var l = 0; l < array.length; l++) {
+                  total += array[l];
+              }
+              var avg = total / array.length;
+
+              currEntry.Avg = (avg / 1000).toFixed(2);
+
+
+              json.push(currEntry)
+            }
+          }
+
+        }
+        const zgRef = document.querySelector('zing-grid');
+        zgRef.setData(json);
+      
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    });
+
+    var myConfig = {
+    type: "line",
+    title: {
+              "text": "Total Average Time of Inactivity Across All Pages",
+              "font-color": "#7E7E7E",
+              "backgroundColor": "none",
+              "font-size": "22px",
+              "alpha": 1,
+              "adjust-layout": true,
+            },
+    scaleX: {
+      minValue: 1622617200000,
+      label: {
+        text: "Day",
+        "font-color": "#7E7E7E",
+        "backgroundColor": "none",
+        "font-size": "15px",
+        "alpha": 1,
+        "adjust-layout": true,
+      },
+      step: 86400000,
+      transform: {
+        type: 'date',
+        all: '%m/%d/%y<br>%h:%i %A'
+      }
+    },
+    scaleY: {
+      label: {
+        text: "Average Time of Inactivity (sec)"
+      }
+    },
+    series: [{
+      values: [72.16, 39.63, 63.92, 79.84, 49.75, 45.34, 53.57]
+    }]
+  };
+  
+  zingchart.render({
+    id: 'myChart',
+    data: myConfig,
+    height: 400
+  });
+
+
+
+  </script>
+
+</body>
+
+</html>
